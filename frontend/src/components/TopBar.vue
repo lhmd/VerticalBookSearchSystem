@@ -15,6 +15,7 @@
         @select="handleSelect"
       >
         <div class="flex-grow"></div>
+        <el-menu-item index="/search" v-if="!isMobile">Search</el-menu-item>
         <el-menu-item index="/home" v-if="!isMobile">Home</el-menu-item>
         <el-menu-item index="logout" v-if="!isMobile">Logout</el-menu-item>
         <el-sub-menu index="4" v-if="isMobile">
@@ -23,6 +24,7 @@
               <operation />
             </el-icon>
           </template>
+          <el-menu-item index="/search">Search</el-menu-item>
           <el-menu-item index="/home">Home</el-menu-item>
           <el-menu-item index="logout">Logout</el-menu-item>
         </el-sub-menu>

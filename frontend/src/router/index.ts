@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from "vue-router";
-import HomeView from "@/views/home/HomeView.vue";
+import HomeView from "@/views/search/HomeView.vue";
 import LoginView from "@/views/LoginView.vue";
 import RegisterView from "@/views/RegisterView.vue";
 import ProfileView from "@/views/home/ProfileView.vue";
@@ -29,9 +29,6 @@ const router = createRouter({
       path: "/home",
       name: "home",
       component: HomeView,
-      meta: {
-        requiresAuth: true, // Mark this route as requiring authentication
-      },
     },
     {
       path: "/home/profile",

@@ -9,7 +9,6 @@
       active-text-color="#ffd04b"
       router
     >
-      <el-menu-item index="/home">搜索中心</el-menu-item>
       <el-menu-item index="/home/profile">个人中心</el-menu-item>
       <el-menu-item index="/about">系统信息</el-menu-item>
     </el-menu>
@@ -22,12 +21,6 @@
       popper-effect="light"
       router
     >
-      <el-menu-item index="/home">
-        <template #title>
-          <el-icon><message /></el-icon>
-          <span>搜索中心</span>
-        </template>
-      </el-menu-item>
       <el-menu-item index="/home/profile">
         <template #title>
           <el-icon><user /></el-icon>

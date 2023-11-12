@@ -1,12 +1,11 @@
 <script setup lang="ts">
 import TopBar from "@/components/TopBar.vue";
-import Welcome from "@/components/home/Welcome.vue";
-import SideBarHome from "@/components/home/SideBarHome.vue";
+import Welcome from "@/components/Welcome.vue";
 </script>
 
 <template>
   <TopBar />
-  <div class="home-container"><SideBarHome /><Welcome /></div>
+  <div class="home-container"><Welcome /></div>
 </template>
 
 <style scoped>
