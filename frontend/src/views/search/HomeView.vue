@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import TopBar from "@/components/TopBar.vue";
-import Welcome from "@/components/Welcome.vue";
+import SearchInput from "@/components/search/SearchInput.vue";
 </script>
 
 <template>
   <TopBar />
-  <div class="home-container"><Welcome /></div>
+  <div class="home-container"><SearchInput /></div>
 </template>
 
 <style scoped>

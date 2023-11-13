@@ -34,7 +34,7 @@ async function modifyInfor() {
     // console.log("发送给后端的消息：", send);
     const response = await axios.post(
       "http://localhost:6034/modifyInfor",
-      send,
+      send
     );
     // console.log("后端返回的消息：", response.data);
     var isModified = response.data.success;
@@ -46,6 +46,7 @@ async function modifyInfor() {
         user.phone,
         user.gender,
         user.address,
+        userStore.interest
       );
       // console.log("修改后的用户信息：", userStore);
       ElMessage.success("修改成功！");
@@ -70,7 +71,7 @@ async function modifyPassword() {
     };
     const response = await axios.post(
       "http://localhost:6034/modifyPassword",
-      send,
+      send
     );
     var isModified = response.data.success;
     if (isModified) {

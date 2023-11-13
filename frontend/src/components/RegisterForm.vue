@@ -17,6 +17,7 @@ const UserRegister = reactive({
   phone: "",
   gender: "",
   address: "",
+  interest: "",
 });
 
 async function onSubmit() {
@@ -38,7 +39,7 @@ async function onSubmit() {
     // console.log(UserRegister);
     const response = await axios.post(
       "http://localhost:6034/registerSubmit",
-      UserRegister,
+      UserRegister
     );
     // console.log("后端返回的消息：", response.data);
     var isLogin = response.data.success;
@@ -109,6 +110,9 @@ async function onSubmit() {
       </el-form-item>
       <el-form-item label="地址">
         <el-input v-model="UserRegister.address" />
+      </el-form-item>
+      <el-form-item label="兴趣">
+        <el-input v-model="UserRegister.interest" />
       </el-form-item>
       <el-form-item>
         <el-button type="success" @click="onSubmit" size="large" round

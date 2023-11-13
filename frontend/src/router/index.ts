@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from "vue-router";
-import HomeView from "@/views/search/HomeView.vue";
+import SearchView from "@/views/search/HomeView.vue";
 import LoginView from "@/views/LoginView.vue";
 import RegisterView from "@/views/RegisterView.vue";
 import ProfileView from "@/views/home/ProfileView.vue";
@@ -27,21 +27,24 @@ const router = createRouter({
     },
     {
       path: "/home",
-      name: "home",
-      component: HomeView,
-    },
-    {
-      path: "/home/profile",
       name: "profile",
       component: ProfileView,
-      meta: {
-        requiresAuth: true, // Mark this route as requiring authentication
-      },
+      // meta: {
+      //   requiresAuth: true, // Mark this route as requiring authentication
+      // },
     },
     {
       path: "/about",
       name: "about",
       component: AboutView,
+    },
+    {
+      path: "/search",
+      name: "search",
+      component: SearchView,
+      // meta: {
+      //   requiresAuth: true, // Mark this route as requiring authentication
+      // },
     },
   ],
 });

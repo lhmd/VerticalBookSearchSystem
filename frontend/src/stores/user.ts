@@ -10,6 +10,7 @@ export const useUserStore = defineStore("user", {
     phone: "",
     gender: "",
     address: "",
+    interest: "",
   }),
   actions: {
     setUserCredentials(
@@ -19,6 +20,7 @@ export const useUserStore = defineStore("user", {
       phone: string,
       gender: string,
       address: string,
+      interest: string
     ) {
       this.username = username;
       this.password = password;
@@ -26,6 +28,7 @@ export const useUserStore = defineStore("user", {
       this.phone = phone;
       this.gender = gender;
       this.address = address;
+      this.interest = interest;
     },
     setAuthenticationStatus(isAuthenticated: boolean) {
       this.isAuthenticated = isAuthenticated;
@@ -37,6 +40,7 @@ export const useUserStore = defineStore("user", {
       this.phone = "";
       this.gender = "";
       this.address = "";
+      this.interest = "";
       // console.log("clear all user data.");
     },
   },

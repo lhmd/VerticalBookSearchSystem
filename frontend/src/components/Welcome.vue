@@ -5,8 +5,7 @@ const name = userStore.username;
 </script>
 
 <template>
-  <div class="welcome-box">
-  </div>
+  <div class="welcome-box"></div>
 </template>
 
 <style>
