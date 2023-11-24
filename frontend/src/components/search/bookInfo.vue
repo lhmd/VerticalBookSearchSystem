@@ -1,26 +1,22 @@
+
 <template>
-  <div class="book-info">
-    <div>
-      <h1>name: {{ book.name }}</h1>
-    </div>
+  <div class="book-info" @click="gotoBookDisplayUnit">
     <div class="content">
       <div class="imageInformation">
         <img :src="book.imageUrl" alt="Book Cover" class="book-cover" />
       </div>
-      <div class="text-information">
-        <div class="categories">categories: {{ book.categories }}</div>
-        <div class="categories">Publisher: {{ book.publisher }}</div>
-        <div class="categories">Pages: {{ book.pages }}</div>
-        <div class="categories">Published Year: {{ book.publishYear }}</div>
-        <div class="categories">Language: {{ book.bookLanguage }}</div>
-        <div class="categories">ISBN: {{ book.isbn }}</div>
-        <div class="categories">Source: {{ book.source }}</div>
-      </div>
+    </div>
+    <div class="book-name">
+      <h2>name: {{ book.name }}</h2>
     </div>
   </div>
 </template>
 
 <script>
+import { ref } from "vue";
+import { useRouter } from "vue-router";
+const router = useRouter();
+
 export default {
   props: {
     book: {
@@ -28,16 +24,24 @@ export default {
       required: true,
     },
   },
-  mounted() {
-    console.log("-----", this.book);
+  methods: {
+    gotoBookDisplayUnit() {
+      this.$router.push({
+        path: "/unit",
+        query: { data: JSON.stringify(this.book) },
+      });
+    },
   },
 };
 </script>
 
 <style scoped>
+.book-name {
+  margin-left: 20px;
+}
 .book-info {
   display: flex;
-  flex-direction: column;
+  border: 2px solid #ccc;
   border-radius: 5px;
   padding: 10px;
   margin: 15px 0;
@@ -47,7 +51,7 @@ export default {
 }
 .text-information {
   flex: 1;
-  margin-left: 50px;
+  margin-left: 20px;
 }
 
 .book-info h2 {
@@ -56,8 +60,8 @@ export default {
 }
 
 .categories {
-  font-size: 1.6rem;
-  margin-bottom: 20px;
+  font-size: 16px;
+  margin-bottom: 5px;
 }
 
 .publisher,
@@ -77,8 +81,8 @@ export default {
 }
 
 .book-cover {
-  width: 350px;
-  height: 500px;
+  width: 200px;
+  height: 200px;
   object-fit: cover;
   border: 1px solid #ccc;
   border-radius: 5px;
