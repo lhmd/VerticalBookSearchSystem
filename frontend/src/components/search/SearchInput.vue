@@ -2,16 +2,15 @@
 import { ref } from "vue";
 import { Search } from "@element-plus/icons-vue";
 const input = ref("");
-const select = ref("");
+const select = ref("")
 </script>
 
 <template>
-  <!-- <div class="mt-4">
+  <div class="mt-4">
     <el-input
-      v-model="input"
-      placeholder="Please input"
-      class="input-with-select"
-    >
+        v-model="input"
+        placeholder="Please input"
+        class="input-with-select">
       <template #prepend>
         <el-select v-model="select" placeholder="Select" style="width: 115px">
           <el-option label="Restaurant" value="1" />
@@ -23,7 +22,7 @@ const select = ref("");
         <el-button :icon="Search" />
       </template>
     </el-input>
-  </div> -->
+  </div>
 </template>
 
 <style>
