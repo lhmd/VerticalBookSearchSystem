@@ -1,6 +1,7 @@
 package com.bookwise.sembackend.model;
 
 import com.bookwise.sembackend.db_model.User;
+import com.bookwise.sembackend.elastic_search.ESBook;
 import lombok.Getter;
 
 import java.util.List;
@@ -20,7 +21,7 @@ public class Login extends ResultBox {
         }
     }
 
-    public Login(boolean success, User user, List<Book> book) {
+    public Login(boolean success, User user, List<ESBook> book) {
         super(success, "");
         this.user = user;
         this.book = book;
@@ -28,13 +29,13 @@ public class Login extends ResultBox {
     }
 
     private User user;
-    private List<Book> book;
+    private List<ESBook> book;
 
     public void setUser(User user) {
         this.user = user;
     }
 
-    public void setBook(List<Book> book) {
+    public void setBook(List<ESBook> book) {
         this.book = book;
     }
 }
