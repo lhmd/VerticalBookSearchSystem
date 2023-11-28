@@ -9,16 +9,14 @@
     </section>
     <section>
       <h2>Our Team</h2>
-      <p>
-        <ul>
-          <li>王伟杰</li>
-          <li>陈华杰</li>
-          <li>刘逸杰</li>
-          <li>黄乐诚</li>
-          <li>包越</li>
-          <li>安俊霖</li>
-        </ul>
-      </p>
+      <ul>
+        <li>王伟杰</li>
+        <li>陈华杰</li>
+        <li>刘逸杰</li>
+        <li>黄乐诚</li>
+        <li>包越</li>
+        <li>安俊霖</li>
+      </ul>
     </section>
     <section>
       <h2>Contact Us</h2>

@@ -38,7 +38,7 @@ async function onSubmit() {
 
     // console.log(UserRegister);
     const response = await axios.post(
-      "http://localhost:6034/registerSubmit",
+      "http://localhost:6034/auth/register",
       UserRegister
     );
     // console.log("后端返回的消息：", response.data);

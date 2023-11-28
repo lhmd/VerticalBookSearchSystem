@@ -4,6 +4,7 @@ import LoginView from "@/views/LoginView.vue";
 import RegisterView from "@/views/RegisterView.vue";
 import ProfileView from "@/views/home/ProfileView.vue";
 import AboutView from "@/views/home/AboutView.vue";
+import BookView from "@/views/search/BookView.vue";
 
 import { useUserStore } from "@/stores/user";
 import { ElMessage } from "element-plus";
@@ -42,6 +43,14 @@ const router = createRouter({
       path: "/search",
       name: "search",
       component: SearchView,
+      // meta: {
+      //   requiresAuth: true, // Mark this route as requiring authentication
+      // },
+    },
+    {
+      path: "/book",
+      name: "book",
+      component: BookView,
       // meta: {
       //   requiresAuth: true, // Mark this route as requiring authentication
       // },

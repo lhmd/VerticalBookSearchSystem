@@ -12,6 +12,7 @@ const user = reactive({
   phone: userStore.phone,
   gender: userStore.gender,
   address: userStore.address,
+  interest: userStore.interest,
 });
 const password = reactive({
   password: "",
@@ -24,16 +25,17 @@ const formLabelWidth = "140px";
 async function modifyInfor() {
   try {
     const send = {
-      username: userStore.username,
-      newUsername: user.username,
+      oldUsername: userStore.username,
+      username: user.username,
       email: user.email,
       phone: user.phone,
       gender: user.gender,
       address: user.address,
+      interest: user.interest,
     };
     // console.log("发送给后端的消息：", send);
     const response = await axios.post(
-      "http://localhost:6034/modifyInfor",
+      "http://localhost:6034/profile/update",
       send
     );
     // console.log("后端返回的消息：", response.data);
@@ -67,10 +69,10 @@ async function modifyPassword() {
     }
     const send = {
       username: userStore.username,
-      password: password.password,
+      newPassword: password.password,
     };
     const response = await axios.post(
-      "http://localhost:6034/modifyPassword",
+      "http://localhost:6034/profile/update-password",
       send
     );
     var isModified = response.data.success;
@@ -107,15 +109,14 @@ async function modifyPassword() {
       <el-descriptions-item label="性别">{{
         user.gender
       }}</el-descriptions-item>
-      <!-- <el-descriptions-item label="" :span="2"><el-button type="primary" @click="modifyGender">修改</el-button></el-descriptions-item> -->
       <el-descriptions-item label="邮箱">{{ user.email }}</el-descriptions-item>
-      <!-- <el-descriptions-item label="" :span="2"><el-button type="primary" @click="modifyEmail">修改</el-button></el-descriptions-item> -->
       <el-descriptions-item label="电话">{{ user.phone }}</el-descriptions-item>
-      <!-- <el-descriptions-item label="" :span="2"><el-button type="primary" @click="modifyPhone">修改</el-button></el-descriptions-item> -->
       <el-descriptions-item label="地址">{{
         user.address
       }}</el-descriptions-item>
-      <!-- <el-descriptions-item label="" :span="2"><el-button type="primary" @click="modifyAddress">修改</el-button></el-descriptions-item> -->
+      <el-descriptions-item label="兴趣">{{
+        user.interest
+      }}</el-descriptions-item>
     </el-descriptions>
   </div>
 
@@ -164,6 +165,9 @@ async function modifyPassword() {
       </el-form-item>
       <el-form-item label="address" :label-width="formLabelWidth">
         <el-input v-model="user.address" autocomplete="off" />
+      </el-form-item>
+      <el-form-item label="interest" :label-width="formLabelWidth">
+        <el-input v-model="user.interest" autocomplete="off" />
       </el-form-item>
     </el-form>
     <template #footer>

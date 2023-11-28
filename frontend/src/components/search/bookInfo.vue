@@ -1,90 +1,67 @@
+<!-- <script setup lang="ts">
 
-<template>
-  <div class="book-info" @click="gotoBookDisplayUnit">
-    <div class="content">
-      <div class="imageInformation">
-        <img :src="book.imageUrl" alt="Book Cover" class="book-cover" />
-      </div>
-    </div>
-    <div class="book-name">
-      <h2>name: {{ book.name }}</h2>
-    </div>
-  </div>
-</template>
+import { ref, onMounted, onBeforeUnmount } from "vue";
+import { useBookStore } from "@/stores/book";
+import { ElMessage } from "element-plus";
+import axios from "axios";
 
-<script>
-import { ref } from "vue";
-import { useRouter } from "vue-router";
-const router = useRouter();
+const bookStore = useBookStore();
 
-export default {
-  props: {
-    book: {
-      type: Object,
-      required: true,
-    },
-  },
-  methods: {
-    gotoBookDisplayUnit() {
-      this.$router.push({
-        path: "/unit",
-        query: { data: JSON.stringify(this.book) },
-      });
-    },
-  },
-};
+// onMounted(() => {
+//   load
+// });
+
 </script>
 
-<style scoped>
-.book-name {
-  margin-left: 20px;
-}
-.book-info {
-  display: flex;
-  border: 2px solid #ccc;
-  border-radius: 5px;
-  padding: 10px;
-  margin: 15px 0;
-}
-.content {
-  display: flex;
-}
-.text-information {
-  flex: 1;
-  margin-left: 20px;
-}
+<template>
+  <div class="book-info">
+    <div class="book-info__title">
+      <h1>{{ bookStore.Book.name }}</h1>
+    </div>
+    <div class="book-info__content">
+      <div class="book-info__content__left">
+        <img :src="bookStore.Book.imageUrl" alt="book" />
+      </div>
+      <div class="book-info__content__right">
+        <div class="book-info__content__right__item">
+          <span class="book-info__content__right__item__title">作者：</span>
+          <span class="book-info__content__right__item__content"
+            >{{ bookStore.Book.author }}</span
+          >
+        </div>
+        <div class="book-info__content__right__item">
+          <span class="book-info__content__right__item__title">出版社：</span>
+          <span class="book-info__content__right__item__content"
+            >{{ bookStore.book.publisher }}</span
+          >
+        </div>
+        <div class="book-info__content__right__item">
+          <span class="book-info__content__right__item__title">出版日期：</span>
+          <span class="book-info__content__right__item__content"
+            >{{ bookStore.book.publishYear }}</span
+          >
+        </div>
+        <div class="book-info__content__right__item">
+          <span class="book-info__content__right__item__title">页数：</span>
+          <span class="book-info__content__right__item__content"
+            >{{ bookStore.book.pages }}</span
+          >
+        </div>
+        <div class="book-info__content__right__item">
+          <span class="book-info__content__right__item__title">语言：</span>
+          <span class="book-info__content__right__item__content"
+            >{{ bookStore.book.BookLanguage }}</span
+          >
+        </div>
+        <div class="book-info__content__right__item">
+          <span class="book-info__content__right__item__title">ISBN：</span>
+          <span class="book-info__content__right__item__content"
+            >{{ bookStore.book.ISBN }}</span
+          >
+        </div>
+        <div class="
+</template>
 
-.book-info h2 {
-  font-size: 24px;
-  margin-bottom: 10px;
-}
+<style>
 
-.categories {
-  font-size: 16px;
-  margin-bottom: 5px;
-}
-
-.publisher,
-.pages,
-.publish-year,
-.language,
-.isbn,
-.source {
-  font-size: 14px;
-  margin-bottom: 5px;
-}
-
-.imageInformation {
-  flex: 1;
-  display: flex;
-  justify-content: center;
-}
-
-.book-cover {
-  width: 200px;
-  height: 200px;
-  object-fit: cover;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-}
-</style>
+</style> -->
