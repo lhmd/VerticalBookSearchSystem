@@ -1,4 +1,4 @@
-package com.bookwise.sembackend.model;
+package com.bookwise.sembackend.web_crawler;
 
 
 import lombok.AllArgsConstructor;

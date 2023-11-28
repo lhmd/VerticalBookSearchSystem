@@ -2,8 +2,8 @@ package com.bookwise.sembackend.controller;
 
 import com.bookwise.sembackend.db_model.User;
 import com.bookwise.sembackend.elastic_search.ESBook;
-import com.bookwise.sembackend.model.Login;
-import com.bookwise.sembackend.model.Register;
+import com.bookwise.sembackend.model.api.Login;
+import com.bookwise.sembackend.model.api.Register;
 import com.bookwise.sembackend.repository.UserRepository;
 import com.bookwise.sembackend.service.BookService;
 import org.springframework.beans.factory.annotation.Autowired;

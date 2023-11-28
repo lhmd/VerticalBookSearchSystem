@@ -1,4 +1,4 @@
-package com.bookwise.sembackend.model;
+package com.bookwise.sembackend.model.api;
 
 import com.bookwise.sembackend.db_model.User;
 

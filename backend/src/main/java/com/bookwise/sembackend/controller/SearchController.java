@@ -1,10 +1,9 @@
 package com.bookwise.sembackend.controller;
 
-import co.elastic.clients.elasticsearch.ElasticsearchClient;
-import co.elastic.clients.elasticsearch.core.IndexRequest;
-import co.elastic.clients.elasticsearch.core.SearchResponse;
 import co.elastic.clients.elasticsearch.core.search.Hit;
 import com.bookwise.sembackend.elastic_search.ESBook;
+import com.bookwise.sembackend.model.api.BookCategory;
+import com.bookwise.sembackend.model.api.RecommendBooks;
 import com.bookwise.sembackend.service.BookService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,5 +39,20 @@ public class SearchController {
     @PostMapping("/add-book")
     public void addBook(@RequestBody ESBook book) {
         bookService.addBook(book);
+    }
+
+    @PostMapping("/interest")
+    public RecommendBooks interest(@RequestBody String category) {
+        List<ESBook> books = bookService.recommendBooks(5, category);
+        if (books != null) {
+            return new RecommendBooks(true, "", books);
+        }
+        return new RecommendBooks(false, "Something wrong", null);
+    }
+
+    @PostMapping("/category")
+    public BookCategory bookCategory() {
+        List<String> categories = bookService.getBookCategories();
+        return new BookCategory(true, "Available book categories in database", categories);
     }
 }
