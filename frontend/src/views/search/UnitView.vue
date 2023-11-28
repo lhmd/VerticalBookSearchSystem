@@ -21,10 +21,8 @@
 </template>
 
 <script setup lang="ts">
-import {useBookStore} from "@/stores/book";
-import {onMounted} from "vue";
-
-
+import { useBookStore } from "@/stores/book";
+import { onMounted } from "vue";
 
 interface Book {
   name: string;
@@ -53,7 +51,6 @@ function loadBook(name: string) {
 onMounted(() => {
   loadBook(name);
 });
-
 </script>
 
 <style scoped>
