@@ -4,9 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -21,8 +18,9 @@ public class ESBook {
     private Integer pages;
     private Integer publishYear;
     private String bookLanguage;
-    private String ISBN;
+    private String isbn;
     private String imageUrl;
+    private String source;
 
     // Predefined lists of real book names, categories, and publishers for demonstration
     private static final String[] REAL_BOOK_NAMES = {
@@ -74,10 +72,31 @@ public class ESBook {
         String randomBookLanguage = "English"; // You can modify this as needed
         String randomISBN = generateRandomString(13); // Generating a random 13-character ISBN
         String randomImageUrl = generateRandomImageUrl();
+        String randomSource = getRandomRealSource(); // Add this line to get a random real source
 
         return new ESBook(randomUuid, randomName, randomCategory, randomPublisher,
-                randomPages, randomPublishYear, randomBookLanguage, randomISBN, randomImageUrl);
+                randomPages, randomPublishYear, randomBookLanguage, randomISBN, randomImageUrl, randomSource);
     }
+
+    // Get a random real source from the predefined list
+    private static String getRandomRealSource() {
+        int randomIndex = ThreadLocalRandom.current().nextInt(REAL_SOURCES.length);
+        return REAL_SOURCES[randomIndex];
+    }
+
+    // Predefined list of real sources for demonstration
+    private static final String[] REAL_SOURCES = {
+            "Amazon",
+            "Barnes & Noble",
+            "Books-A-Million",
+            "Book Depository",
+            "IndieBound",
+            "Powell's Books",
+            "ThriftBooks",
+            "Bookfinder",
+            "AbeBooks",
+            "Booktopia"
+    };
 
     // Generate a real valid image URL using Lorem Picsum
     private static String generateRandomImageUrl() {

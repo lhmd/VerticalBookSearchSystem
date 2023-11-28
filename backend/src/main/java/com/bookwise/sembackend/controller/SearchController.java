@@ -4,6 +4,8 @@ import co.elastic.clients.elasticsearch.core.search.Hit;
 import com.bookwise.sembackend.elastic_search.ESBook;
 import com.bookwise.sembackend.model.api.BookCategory;
 import com.bookwise.sembackend.model.api.RecommendBooks;
+import com.bookwise.sembackend.model.api.SearchReq;
+import com.bookwise.sembackend.model.api.SearchRes;
 import com.bookwise.sembackend.service.BookService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +21,8 @@ public class SearchController {
     @Autowired
     private BookService bookService;
 
-    @PostMapping("/search")
+    @Deprecated
+    @PostMapping("/deprecated-search")
     public List<ESBook> search(
             @RequestParam(required = false, value = "q") String query,
             @RequestParam(required = false, value = "type") String type
@@ -34,6 +37,17 @@ public class SearchController {
             books.add(hit.source());
         }
         return books;
+    }
+
+    @PostMapping("/search")
+    public SearchRes search(@RequestBody SearchReq body) {
+        List<Hit<ESBook>> hitBooks = bookService.proSearch(body, 100);
+        ArrayList<ESBook> books = new ArrayList<>();
+        for (Hit<ESBook> hit : hitBooks) {
+            System.out.println(hit);
+            books.add(hit.source());
+        }
+        return new SearchRes(false, "Not yet implement", books);
     }
 
     @PostMapping("/add-book")
