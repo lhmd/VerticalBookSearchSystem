@@ -1,16 +1,20 @@
 package com.bookwise.sembackend.service;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
+import co.elastic.clients.elasticsearch._types.FieldValue;
+import co.elastic.clients.elasticsearch._types.aggregations.*;
 import co.elastic.clients.elasticsearch._types.query_dsl.TextQueryType;
 import co.elastic.clients.elasticsearch.core.IndexRequest;
+import co.elastic.clients.elasticsearch.core.SearchRequest;
 import co.elastic.clients.elasticsearch.core.SearchResponse;
 import co.elastic.clients.elasticsearch.core.search.Hit;
-import co.elastic.clients.elasticsearch.core.search.HitsMetadata;
+import co.elastic.clients.elasticsearch.transform.Source;
 import com.alibaba.fastjson2.JSON;
 import com.bookwise.sembackend.elastic_search.ESBook;
-import com.bookwise.sembackend.model.YLibEntity;
+import com.bookwise.sembackend.web_crawler.YLibEntity;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.elasticsearch.client.RequestOptions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
@@ -18,11 +22,15 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
+
+import static co.elastic.clients.elasticsearch._types.aggregations.Aggregation.Kind.Terms;
 
 
 @Service
@@ -47,6 +55,7 @@ public class BookService {
 
     @Autowired
     private ElasticsearchClient client;
+
     public List<ESBook> recommendBooks(int count, String category) {
         try {
             SearchResponse<ESBook> response = _search(category, "category");
@@ -56,7 +65,7 @@ public class BookService {
             Collections.shuffle(esBooks);
             return esBooks.subList(0, Math.min(count, esBooks.size()));
 
-        }catch (Exception e) {
+        } catch (Exception e) {
             log.error(e.getMessage());
             e.printStackTrace();
         }
@@ -109,6 +118,40 @@ public class BookService {
         } catch (Exception e) {
             log.error(e.getMessage());
             e.printStackTrace();
+        }
+        return null;
+    }
+
+    public List<String> getBookCategories() {
+        try {
+            SearchResponse<ESBook> response = client.search(q -> q
+                            .index("books")
+                            .size(0)
+                            .from(0)
+                            .aggregations("my", a -> a
+                                    .terms(t -> t
+                                            .field("category.keyword")))
+
+                    , ESBook.class);
+            StringTermsAggregate terms = response.aggregations().get("my").sterms();
+
+            List<String> categories = terms.buckets()
+                    .array()
+                    .stream()
+                    .map(StringTermsBucket::key)
+                    .toList()
+                    .stream()
+                    .map(FieldValue::_toJsonString)
+                    .toList();
+
+            for (String i : categories) {
+                System.out.println(i);
+            }
+
+            return categories;
+
+        } catch (Exception e) {
+            log.error(e.getMessage());
         }
         return null;
     }

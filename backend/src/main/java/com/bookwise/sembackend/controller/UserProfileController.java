@@ -1,7 +1,7 @@
 package com.bookwise.sembackend.controller;
 
 import com.bookwise.sembackend.db_model.User;
-import com.bookwise.sembackend.model.ResultBox;
+import com.bookwise.sembackend.model.api.ResultBox;
 import com.bookwise.sembackend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
