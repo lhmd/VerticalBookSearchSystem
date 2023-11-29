@@ -23,7 +23,7 @@ const bookSearch = reactive({
   isbn: "",
   source: "",
   imageUrl: "",
-  isFuzzy: [false, false, false, false, false, false], // 是否模糊查询，0-5分别对应书籍名称、出版社、页数、语言、ISBN、来源
+  isFuzzy: [false, false, false, false], // 是否模糊查询，0-5分别对应书籍名称、出版社、页数、来源
 });
 
 const checkAll = ref(false);
@@ -32,180 +32,181 @@ const isIndeterminate = ref(true);
 // 提交
 const submitSearch = () => {
   // 测试
-  console.log(bookSearch);
-  bookStore.clearBooks();
-  for (var i = 0; i < 10; i++) {
-    bookStore.addBook(
-      "测试书籍",
-      "测试分类",
-      "测试出版社",
-      12,
-      1999,
-      "测试语言",
-      "测试ISBN",
-      "测试来源",
-      "https://files.catbox.moe/03zgjn.jpg"
-    );
-  }
-  title.value = "搜索结果";
-  // axios
-  //   .post("http://localhost:6034/search", bookSearch)
-  //   .then((response) => {
-  //     // console.log("后端返回的消息：", response.data);
-  //     var isSearch = response.data.success;
-  //     if (isSearch) {
-  //       // console.log(response.data.books);
-  //       bookStore.clearBooks();
-  //       for (var i = 0; i < response.data.books.length; i++) {
-  //         bookStore.addBook(
-  //           response.data.books[i].name,
-  //           response.data.books[i].category,
-  //           response.data.books[i].publisher,
-  //           response.data.books[i].pages,
-  //           response.data.books[i].publishYear,
-  //           response.data.books[i].BookLanguage,
-  //           response.data.books[i].ISBN,
-  //           response.data.books[i].source,
-  //           response.data.books[i].imageUrl
-  //         );
-  //       }
-  //       title.value = "搜索结果";
-  //       // 将isFuzzy转换为字符串
-  //       var isFuzzyString = "";
-  //       for (var i = 0; i < bookSearch.isFuzzy.length; i++) {
-  //         if (bookSearch.isFuzzy[i]) {
-  //           isFuzzyString += "1";
-  //         } else {
-  //           isFuzzyString += "0";
-  //         }
-  //       }
-  //       // 将category转换为字符串
-  //       var categoryString = "";
-  //       for (var i = 0; i < bookSearch.category.length; i++) {
-  //         categoryString += bookSearch.category[i];
-  //         if (i != bookSearch.category.length - 1) {
-  //           categoryString += ",";
-  //         }
-  //       }
-  //       router.push({
-  //         name: "search",
-  //         query: {
-  //           name: bookSearch.name,
-  //           category: bookSearch.category,
-  //           publisher: bookSearch.publisher,
-  //           pages: bookSearch.pages,
-  //           publishYear: bookSearch.publishYear,
-  //           bookLanguage: bookSearch.bookLanguage,
-  //           isbn: bookSearch.isbn,
-  //           source: bookSearch.source,
-  //           isFuzzy: isFuzzyString,
-  //         },
-  //       });
-  //     } else {
-  //       ElMessage.error("搜索失败"); // Use ElMessage for error message
-  //     }
-  //   })
-  //   .catch((error) => {
-  //     ElMessage.error("搜索失败");
-  //     console.error("请求出错：", error);
-  //   });
+  // console.log(bookSearch);
+  // bookStore.clearBooks();
+  // for (var i = 0; i < 10; i++) {
+  //   bookStore.addBook(
+  //     "测试书籍",
+  //     "测试分类",
+  //     "测试出版社",
+  //     12,
+  //     1999,
+  //     "测试语言",
+  //     "测试ISBN",
+  //     "测试来源",
+  //     "https://files.catbox.moe/03zgjn.jpg"
+  //   );
+  // }
+  // title.value = "搜索结果";
+
+  axios
+    .post("http://localhost:6034/search", bookSearch)
+    .then((response) => {
+      // console.log("后端返回的消息：", response.data);
+      var isSearch = response.data.success;
+      if (isSearch) {
+        // console.log(response.data.books);
+        bookStore.clearBooks();
+        for (var i = 0; i < response.data.books.length; i++) {
+          bookStore.addBook(
+            response.data.books[i].name,
+            response.data.books[i].category,
+            response.data.books[i].publisher,
+            response.data.books[i].pages,
+            response.data.books[i].publishYear,
+            response.data.books[i].BookLanguage,
+            response.data.books[i].ISBN,
+            response.data.books[i].source,
+            response.data.books[i].imageUrl
+          );
+        }
+        title.value = "搜索结果";
+        // 将isFuzzy转换为字符串
+        var isFuzzyString = "";
+        for (var i = 0; i < bookSearch.isFuzzy.length; i++) {
+          if (bookSearch.isFuzzy[i]) {
+            isFuzzyString += "1";
+          } else {
+            isFuzzyString += "0";
+          }
+        }
+        // 将category转换为字符串
+        var categoryString = "";
+        for (var i = 0; i < bookSearch.category.length; i++) {
+          categoryString += bookSearch.category[i];
+          if (i != bookSearch.category.length - 1) {
+            categoryString += ",";
+          }
+        }
+        router.push({
+          name: "search",
+          query: {
+            name: bookSearch.name,
+            category: bookSearch.category,
+            publisher: bookSearch.publisher,
+            pages: bookSearch.pages,
+            publishYear: bookSearch.publishYear,
+            bookLanguage: bookSearch.bookLanguage,
+            isbn: bookSearch.isbn,
+            source: bookSearch.source,
+            isFuzzy: isFuzzyString,
+          },
+        });
+      } else {
+        ElMessage.error("搜索失败"); // Use ElMessage for error message
+      }
+    })
+    .catch((error) => {
+      ElMessage.error("搜索失败");
+      console.error("请求出错：", error);
+    });
 };
 
 async function loadBook() {
   // 测试
-  bookStore.clearBooks();
-  for (var i = 0; i < 10; i++) {
-    bookStore.addBook(
-      "测试书籍",
-      "测试分类",
-      "测试出版社",
-      12,
-      1999,
-      "测试语言",
-      "测试ISBN",
-      "测试来源",
-      "https://files.catbox.moe/03zgjn.jpg"
-    );
-  }
-  console.log(bookStore.Books);
-  title.value = "推荐书籍";
-  // try {
-  //   if (bookStore.Books.length > 0) {
-  //     title.value = "搜索结果";
-  //     bookSearch.name = router.currentRoute.value.query.name as string;
-  //     // category解码
-  //     var categoryString = router.currentRoute.value.query.category as string;
-  //     var categoryArray = categoryString.split(",");
-  //     bookSearch.category = categoryArray;
-  //     bookSearch.publisher = router.currentRoute.value.query.publisher as string;
-  //     bookSearch.pages = router.currentRoute.value.query.pages as string;
-  //     bookSearch.publishYear =
-  //       router.currentRoute.value.query.publishYear as string;
-  //     bookSearch.bookLanguage =
-  //       router.currentRoute.value.query.bookLanguage as string;
-  //     bookSearch.isbn = router.currentRoute.value.query.isbn as string;
-  //     bookSearch.source = router.currentRoute.value.query.source as string;
-  //     // isFuzzy解码
-  //     var isFuzzyString = router.currentRoute.value.query.isFuzzy as string;
-  //     for (var i = 0; i < isFuzzyString.length; i++) {
-  //       if (isFuzzyString[i] === "1") {
-  //         bookSearch.isFuzzy[i] = true;
-  //       } else {
-  //         bookSearch.isFuzzy[i] = false;
-  //       }
-  //     }
-  //     return;
-  //   }
-  //   const send = {
-  //     interest: userStore.interest,
-  //   };
-  //   const response = await axios.post("http://localhost:6034/interest", send);
-  //   // console.log("后端返回的消息：", response.data);
-  //   var isLoad = response.data.success;
-  //   if (isLoad) {
-  //     // console.log(response.data.books);
-  //     const bookStore = useBookStore();
-  //     for (var i = 0; i < response.data.books.length; i++) {
-  //       bookStore.addBook(
-  //         response.data.books[i].name,
-  //         response.data.books[i].category,
-  //         response.data.books[i].publisher,
-  //         response.data.books[i].pages,
-  //         response.data.books[i].publishYear,
-  //         response.data.books[i].BookLanguage,
-  //         response.data.books[i].ISBN,
-  //         response.data.books[i].source,
-  //         response.data.books[i].imageUrl
-  //       );
-  //     }
-  //   } else {
-  //     ElMessage.error("加载书籍失败"); // Use ElMessage for error message
-  //   }
-  // } catch (error) {
-  //   ElMessage.error("加载书籍失败");
+  // bookStore.clearBooks();
+  // for (var i = 0; i < 12; i++) {
+  //   bookStore.addBook(
+  //     "测试书籍",
+  //     "测试分类",
+  //     "测试出版社",
+  //     12,
+  //     1999,
+  //     "测试语言",
+  //     "测试ISBN",
+  //     "测试来源",
+  //     "https://files.catbox.moe/03zgjn.jpg"
+  //   );
   // }
+  // console.log(bookStore.Books);
+  // title.value = "推荐书籍";
+  try {
+    if (bookStore.Books.length > 0) {
+      title.value = "搜索结果";
+      bookSearch.name = router.currentRoute.value.query.name as string;
+      // category解码
+      var categoryString = router.currentRoute.value.query.category as string;
+      var categoryArray = categoryString.split(",");
+      bookSearch.category = categoryArray;
+      bookSearch.publisher = router.currentRoute.value.query.publisher as string;
+      bookSearch.pages = router.currentRoute.value.query.pages as string;
+      bookSearch.publishYear =
+        router.currentRoute.value.query.publishYear as string;
+      bookSearch.bookLanguage =
+        router.currentRoute.value.query.bookLanguage as string;
+      bookSearch.isbn = router.currentRoute.value.query.isbn as string;
+      bookSearch.source = router.currentRoute.value.query.source as string;
+      // isFuzzy解码
+      var isFuzzyString = router.currentRoute.value.query.isFuzzy as string;
+      for (var i = 0; i < isFuzzyString.length; i++) {
+        if (isFuzzyString[i] === "1") {
+          bookSearch.isFuzzy[i] = true;
+        } else {
+          bookSearch.isFuzzy[i] = false;
+        }
+      }
+      return;
+    }
+    const send = {
+      interest: userStore.interest,
+    };
+    const response = await axios.post("http://localhost:6034/interest", send);
+    // console.log("后端返回的消息：", response.data);
+    var isLoad = response.data.success;
+    if (isLoad) {
+      // console.log(response.data.books);
+      const bookStore = useBookStore();
+      for (var i = 0; i < response.data.books.length; i++) {
+        bookStore.addBook(
+          response.data.books[i].name,
+          response.data.books[i].category,
+          response.data.books[i].publisher,
+          response.data.books[i].pages,
+          response.data.books[i].publishYear,
+          response.data.books[i].BookLanguage,
+          response.data.books[i].ISBN,
+          response.data.books[i].source,
+          response.data.books[i].imageUrl
+        );
+      }
+    } else {
+      ElMessage.error("加载书籍失败"); // Use ElMessage for error message
+    }
+  } catch (error) {
+    ElMessage.error("加载书籍失败");
+  }
 }
 
 async function loadCategory() {
   // 测试
-  for (var i = 0; i < 4; i++) {
-    category.value.push("测试分类" + i);
-  }
-
-  // try {
-  //   const response = await axios.get("http://localhost:6034/category");
-  //   // console.log("后端返回的消息：", response.data);
-  //   var isLoad = response.data.success;
-  //   if (isLoad) {
-  //     // console.log(response.data.category);
-  //     const bookStore = useBookStore();
-  //     category.value = response.data.category;
-  //   } else {
-  //     ElMessage.error("加载分类失败"); // Use ElMessage for error message
-  //   }
-  // } catch (error) {
-  //   ElMessage.error("加载分类失败");
+  // for (var i = 0; i < 4; i++) {
+  //   category.value.push("测试分类" + i);
   // }
+
+  try {
+    const response = await axios.get("http://localhost:6034/category");
+    // console.log("后端返回的消息：", response.data);
+    var isLoad = response.data.success;
+    if (isLoad) {
+      // console.log(response.data.category);
+      const bookStore = useBookStore();
+      category.value = response.data.category;
+    } else {
+      ElMessage.error("加载分类失败"); // Use ElMessage for error message
+    }
+  } catch (error) {
+    ElMessage.error("加载分类失败");
+  }
 }
 
 onBeforeMount(() => {
@@ -315,11 +316,8 @@ function goToBook(name: string) {
         style="margin-left: 1vw"
       ></el-switch>
     </el-form-item>
-    <el-form-item label="语言：">
-      <el-input
-        v-model="bookSearch.bookLanguage"
-        style="width: 15vw"
-      ></el-input>
+    <el-form-item label="来源：">
+      <el-input v-model="bookSearch.source" style="width: 15vw"></el-input>
       <el-switch
         v-model="bookSearch.isFuzzy[3]"
         active-color="#13ce66"
@@ -329,27 +327,14 @@ function goToBook(name: string) {
         style="margin-left: 1vw"
       ></el-switch>
     </el-form-item>
+    <el-form-item label="语言：">
+      <el-input
+        v-model="bookSearch.bookLanguage"
+        style="width: 15vw"
+      ></el-input>
+    </el-form-item>
     <el-form-item label="ISBN：">
       <el-input v-model="bookSearch.isbn" style="width: 15vw"></el-input>
-      <el-switch
-        v-model="bookSearch.isFuzzy[4]"
-        active-color="#13ce66"
-        inactive-color="#ff4949"
-        active-text="模糊"
-        inactive-text="精确"
-        style="margin-left: 1vw"
-      ></el-switch>
-    </el-form-item>
-    <el-form-item label="来源：">
-      <el-input v-model="bookSearch.source" style="width: 15vw"></el-input>
-      <el-switch
-        v-model="bookSearch.isFuzzy[5]"
-        active-color="#13ce66"
-        inactive-color="#ff4949"
-        active-text="模糊"
-        inactive-text="精确"
-        style="margin-left: 1vw"
-      ></el-switch>
     </el-form-item>
     <el-form-item label="出版日期：">
       <el-date-picker
@@ -373,52 +358,18 @@ function goToBook(name: string) {
     <el-col>
       <el-row
         class="book"
-        v-for="book in bookStore.Books"
-        :key="book.first.name"
       >
-        <el-card shadow="hover" style="width: 200px; margin: 10px">
+        <el-card shadow="hover" style="width: 200px; margin: 10px" v-for="book in bookStore.Books">
           <img
-            :src="book.first.imageUrl"
+            :src="book.imageUrl"
             class="image"
             style="width: 160px; height: 200px"
           />
           <div style="padding: 14px">
-            <span>{{ book.first.name }}</span>
+            <span>{{ book.name }}</span>
             <div class="bottom clearfix">
-              <time class="time">出版日期：{{ book.first.publishYear }}</time>
-              <el-button type="primary" @click="goToBook(book.first.name)">
-                查看详情
-              </el-button>
-            </div>
-          </div>
-        </el-card>
-        <el-card shadow="hover" style="width: 200px; margin: 10px">
-          <img
-            :src="book.second.imageUrl"
-            class="image"
-            style="width: 160px; height: 200px"
-          />
-          <div style="padding: 14px">
-            <span>{{ book.second.name }}</span>
-            <div class="bottom clearfix">
-              <time class="time">出版日期：{{ book.second.publishYear }}</time>
-              <el-button type="primary" @click="goToBook(book.second.name)">
-                查看详情
-              </el-button>
-            </div>
-          </div>
-        </el-card>
-        <el-card shadow="hover" style="width: 200px; margin: 10px">
-          <img
-            :src="book.third.imageUrl"
-            class="image"
-            style="width: 160px; height: 200px"
-          />
-          <div style="padding: 14px">
-            <span>{{ book.third.name }}</span>
-            <div class="bottom clearfix">
-              <time class="time">出版日期：{{ book.third.publishYear }}</time>
-              <el-button type="primary" @click="goToBook(book.third.name)">
+              <time class="time">出版日期：{{ book.publishYear }}</time>
+              <el-button type="primary" @click="goToBook(book.name)">
                 查看详情
               </el-button>
             </div>
