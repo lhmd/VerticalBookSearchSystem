@@ -38,11 +38,7 @@ public class BookService {
     @Value("${api.ylib.url}")
     private String ylibUrl;
 
-    @Value("${api.rapidapi.url}")
-    private String rapidapiUrl;
 
-    @Value("${api.rapidapi.apikey}")
-    private String rapidapiApiKey;
 
     @Autowired
     RestTemplateBuilder restTemplateBuilder;
