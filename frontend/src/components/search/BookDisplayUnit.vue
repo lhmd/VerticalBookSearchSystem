@@ -1,19 +1,30 @@
 <template>
-  <!-- 展示书中具体内容 -->
   <div class="book-info">
-    <h2>{{ book.name }}</h2>
+    <div>
+      <h1>name: {{ book.name }}</h1>
+    </div>
     <div class="content">
       <div class="imageInformation">
-        <img :src="book.imageUrl" class="book-cover" />
+        <img :src="book.imageUrl" alt="Book Cover" class="book-cover" />
       </div>
       <div class="text-information">
-        <div class="categories">Category: {{ book.category }}</div>
-        <div class="publisher">Publisher: {{ book.publisher }}</div>
-        <div class="pages">Pages: {{ book.pages }}</div>
-        <div class="publish-year">Publish Year: {{ book.publishYear }}</div>
-        <div class="language">Language: {{ book.BookLanguage }}</div>
+        <div class="categories">categories: {{ book.category }}</div>
+        <div class="categories">Publisher: {{ book.publisher }}</div>
+        <div class="categories">Pages: {{ book.pages }}</div>
+        <div class="categories">Published Year: {{ book.publishYear }}</div>
+        <div class="categories">Language: {{ book.BookLanguage }}</div>
         <div class="categories">ISBN: {{ book.ISBN }}</div>
         <div class="categories">Source: {{ book.source }}</div>
+      </div>
+    </div>
+  </div>
+  <!-- 展示相似书籍 -->
+  <div class="similar-books">
+    <h2>相似书籍</h2>
+    <div class="similar-books-list">
+      <div class="similar-book" v-for="book in similarBooks" :key="book.name">
+        <img :src="book.imageUrl" alt="Book Cover" class="book-cover" />
+        <div class="book-name">{{ book.name }}</div>
       </div>
     </div>
   </div>
@@ -23,6 +34,8 @@
 import { useBookStore } from "@/stores/book";
 import { onBeforeMount } from "vue";
 import router from "@/router";
+import axios from "axios";
+import { ElMessage } from "element-plus/lib";
 
 interface Book {
   name: string;
@@ -37,21 +50,22 @@ interface Book {
 }
 const bookStore = useBookStore();
 let book: Book;
+let similarBooks: Book[] = [];
 
 function loadBook(name: string) {
   // 测试
-  bookStore.addBook(
-    "The Art of Computer Programming, Vol. 1: Fundamental Algorithms",
-    "Computer Science",
-    "Addison-Wesley Professional",
-    672,
-    1997,
-    "English",
-    "9780201896831",
-    "https://images-na.ssl-images-amazon.com/images/I/41p1WtVbKZL._SX379_BO1,204,203,200_.jpg",
-    "https://files.catbox.moe/03zgjn.jpg"
-  )
-  name = "The Art of Computer Programming, Vol. 1: Fundamental Algorithms";
+  // bookStore.addBook(
+  //   "The Art of Computer Programming, Vol. 1: Fundamental Algorithms",
+  //   "Computer Science",
+  //   "Addison-Wesley Professional",
+  //   672,
+  //   1997,
+  //   "English",
+  //   "9780201896831",
+  //   "https://images-na.ssl-images-amazon.com/images/I/41p1WtVbKZL._SX379_BO1,204,203,200_.jpg",
+  //   "https://files.catbox.moe/03zgjn.jpg"
+  // )
+  // name = "The Art of Computer Programming, Vol. 1: Fundamental Algorithms";
 
   // console.log(bookStore.Books);
   for (let i = 0; i < bookStore.Books.length; i++) {
@@ -60,7 +74,26 @@ function loadBook(name: string) {
       break;
     }
   }
-  console.log(book);
+  loadSimilarBooks(book.category);
+}
+
+async function loadSimilarBooks(category: string) {
+  try {
+    // console.log(book);
+    const send = {
+      interest: category,
+    }
+    const response = await axios.post("http://localhost:6034/interest", send);
+      // console.log("后端返回的消息：", response.data);
+    var isLoad = response.data.success;
+    if (isLoad) {
+      similarBooks = response.data.books;
+    } else {
+      ElMessage.error("Failed to load similar books");
+    }
+  } catch (error) {
+    ElMessage.error("Failed to load similar books");
+  }
 }
 
 onBeforeMount(() => {
