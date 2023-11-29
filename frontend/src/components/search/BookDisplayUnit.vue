@@ -1,4 +1,4 @@
-<template>
+<!-- <template>
   <div class="book-info">
     <div>
       <h1>name: {{ book.name }}</h1>
@@ -83,4 +83,4 @@ export default {
   border: 1px solid #ccc;
   border-radius: 5px;
 }
-</style>
+</style> -->

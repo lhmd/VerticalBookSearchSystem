@@ -1,18 +1,17 @@
 <template>
+  <!-- 展示书中具体内容 -->
   <div class="book-info">
-    <div>
-      <h1>name: {{ book.name }}</h1>
-    </div>
+    <h2>{{ book.name }}</h2>
     <div class="content">
       <div class="imageInformation">
-        <img :src="book.imageUrl" alt="Book Cover" class="book-cover" />
+        <img :src="book.imageUrl" class="book-cover" />
       </div>
       <div class="text-information">
-        <div class="categories">categories: {{ book.category }}</div>
-        <div class="categories">Publisher: {{ book.publisher }}</div>
-        <div class="categories">Pages: {{ book.pages }}</div>
-        <div class="categories">Published Year: {{ book.publishYear }}</div>
-        <div class="categories">Language: {{ book.BookLanguage }}</div>
+        <div class="categories">Category: {{ book.category }}</div>
+        <div class="publisher">Publisher: {{ book.publisher }}</div>
+        <div class="pages">Pages: {{ book.pages }}</div>
+        <div class="publish-year">Publish Year: {{ book.publishYear }}</div>
+        <div class="language">Language: {{ book.BookLanguage }}</div>
         <div class="categories">ISBN: {{ book.ISBN }}</div>
         <div class="categories">Source: {{ book.source }}</div>
       </div>
@@ -22,7 +21,8 @@
 
 <script setup lang="ts">
 import { useBookStore } from "@/stores/book";
-import { onMounted } from "vue";
+import { onBeforeMount } from "vue";
+import router from "@/router";
 
 interface Book {
   name: string;
@@ -39,17 +39,26 @@ const bookStore = useBookStore();
 let book: Book;
 
 function loadBook(name: string) {
-  const bookStore = useBookStore();
+  // console.log(bookStore.Books);
   for (let i = 0; i < bookStore.Books.length; i++) {
-    if (bookStore.Books[i].name === name) {
-      book = bookStore.Books[i];
+    if (bookStore.Books[i].first.name === name) {
+      book = bookStore.Books[i].first;
+      break;
+    } else if (bookStore.Books[i].second.name === name) {
+      book = bookStore.Books[i].second;
+      break;
+    } else if (bookStore.Books[i].third.name === name) {
+      book = bookStore.Books[i].third;
       break;
     }
   }
+  console.log(book);
 }
 
-onMounted(() => {
-  loadBook(name);
+onBeforeMount(() => {
+  let name = router.currentRoute.value.query.name;
+  // console.log("aa", name);
+  loadBook(name as string);
 });
 </script>
 

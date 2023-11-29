@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Search } from "@element-plus/icons-vue";
-import { ref, onMounted, onBeforeUnmount, reactive } from "vue";
+import { ref, onBeforeMount, reactive } from "vue";
+import { useUserStore } from "@/stores/user";
 import { useBookStore } from "@/stores/book";
 import { ElMessage } from "element-plus";
 import router from "@/router";
@@ -9,11 +10,12 @@ import axios from "axios";
 let category = ref([]);
 let title = ref("推荐书籍");
 
+const userStore = useUserStore();
 const bookStore = useBookStore();
 
 const bookSearch = reactive({
   name: "",
-  category: [],
+  category: [] as string[],
   publisher: "",
   pages: "",
   publishYear: "",
@@ -26,36 +28,6 @@ const bookSearch = reactive({
 
 const checkAll = ref(false);
 const isIndeterminate = ref(true);
-
-// // 设置Books
-// interface Book {
-//   name: string;
-//   category: string;
-//   publisher: string;
-//   pages: number;
-//   publishYear: number;
-//   BookLanguage: string;
-//   ISBN: string;
-//   source: string;
-//   imageUrl: string;
-// }
-// // 数组，每次只存三个书籍
-// interface threeBooks {
-//   first: Book;
-//   second: Book;
-//   third: Book;
-// }
-// let Books: threeBooks[] = [];
-// const setBooks = (books: Book[]) => {
-//   Books = [];
-//   for (var i = 0; i < books.length; i += 3) {
-//     Books.push({
-//       first: books[i],
-//       second: books[i + 1],
-//       third: books[i + 2],
-//     });
-//   }
-// };
 
 // 提交
 const submitSearch = () => {
@@ -97,8 +69,38 @@ const submitSearch = () => {
   //           response.data.books[i].imageUrl
   //         );
   //       }
-  //       setBooks(response.data.books);
   //       title.value = "搜索结果";
+  //       // 将isFuzzy转换为字符串
+  //       var isFuzzyString = "";
+  //       for (var i = 0; i < bookSearch.isFuzzy.length; i++) {
+  //         if (bookSearch.isFuzzy[i]) {
+  //           isFuzzyString += "1";
+  //         } else {
+  //           isFuzzyString += "0";
+  //         }
+  //       }
+  //       // 将category转换为字符串
+  //       var categoryString = "";
+  //       for (var i = 0; i < bookSearch.category.length; i++) {
+  //         categoryString += bookSearch.category[i];
+  //         if (i != bookSearch.category.length - 1) {
+  //           categoryString += ",";
+  //         }
+  //       }
+  //       router.push({
+  //         name: "search",
+  //         query: {
+  //           name: bookSearch.name,
+  //           category: bookSearch.category,
+  //           publisher: bookSearch.publisher,
+  //           pages: bookSearch.pages,
+  //           publishYear: bookSearch.publishYear,
+  //           bookLanguage: bookSearch.bookLanguage,
+  //           isbn: bookSearch.isbn,
+  //           source: bookSearch.source,
+  //           isFuzzy: isFuzzyString,
+  //         },
+  //       });
   //     } else {
   //       ElMessage.error("搜索失败"); // Use ElMessage for error message
   //     }
@@ -109,7 +111,6 @@ const submitSearch = () => {
   //   });
 };
 
-// 加载推荐书籍
 async function loadBook() {
   // 测试
   bookStore.clearBooks();
@@ -129,6 +130,32 @@ async function loadBook() {
   console.log(bookStore.Books);
   title.value = "推荐书籍";
   // try {
+  //   if (bookStore.Books.length > 0) {
+  //     title.value = "搜索结果";
+  //     bookSearch.name = router.currentRoute.value.query.name as string;
+  //     // category解码
+  //     var categoryString = router.currentRoute.value.query.category as string;
+  //     var categoryArray = categoryString.split(",");
+  //     bookSearch.category = categoryArray;
+  //     bookSearch.publisher = router.currentRoute.value.query.publisher as string;
+  //     bookSearch.pages = router.currentRoute.value.query.pages as string;
+  //     bookSearch.publishYear =
+  //       router.currentRoute.value.query.publishYear as string;
+  //     bookSearch.bookLanguage =
+  //       router.currentRoute.value.query.bookLanguage as string;
+  //     bookSearch.isbn = router.currentRoute.value.query.isbn as string;
+  //     bookSearch.source = router.currentRoute.value.query.source as string;
+  //     // isFuzzy解码
+  //     var isFuzzyString = router.currentRoute.value.query.isFuzzy as string;
+  //     for (var i = 0; i < isFuzzyString.length; i++) {
+  //       if (isFuzzyString[i] === "1") {
+  //         bookSearch.isFuzzy[i] = true;
+  //       } else {
+  //         bookSearch.isFuzzy[i] = false;
+  //       }
+  //     }
+  //     return;
+  //   }
   //   const send = {
   //     interest: userStore.interest,
   //   };
@@ -151,7 +178,6 @@ async function loadBook() {
   //         response.data.books[i].imageUrl
   //       );
   //     }
-  //     setBooks(response.data.books);
   //   } else {
   //     ElMessage.error("加载书籍失败"); // Use ElMessage for error message
   //   }
@@ -182,7 +208,7 @@ async function loadCategory() {
   // }
 }
 
-onMounted(() => {
+onBeforeMount(() => {
   loadBook();
   loadCategory();
 });
@@ -231,7 +257,7 @@ const shortcuts = [
 function goToBook(name: string) {
   router.push({
     name: "unit",
-    params: {
+    query: {
       name: name,
     },
   });
@@ -239,7 +265,7 @@ function goToBook(name: string) {
 </script>
 
 <template>
-  <el-form :model="bookSearch" label-width="120px" class="sidebar">
+  <el-form :model="bookSearch" label-width="100px" class="sidebar">
     <el-form-item label="书籍类别：">
       <el-checkbox
         v-model="checkAll"
@@ -257,70 +283,73 @@ function goToBook(name: string) {
       </el-checkbox-group>
     </el-form-item>
     <el-form-item label="书籍名称：">
-        <el-input v-model="bookSearch.name" style="width: 15vw"></el-input>
-        <el-switch
-          v-model="bookSearch.isFuzzy[0]"
-          active-color="#13ce66"
-          inactive-color="#ff4949"
-          active-text="模糊"
-          inactive-text="精确"
-          style="margin-left: 1vw"
-        ></el-switch>
+      <el-input v-model="bookSearch.name" style="width: 15vw"></el-input>
+      <el-switch
+        v-model="bookSearch.isFuzzy[0]"
+        active-color="#13ce66"
+        inactive-color="#ff4949"
+        active-text="模糊"
+        inactive-text="精确"
+        style="margin-left: 1vw"
+      ></el-switch>
     </el-form-item>
     <el-form-item label="出版社：">
       <el-input v-model="bookSearch.publisher" style="width: 15vw"></el-input>
-        <el-switch
-          v-model="bookSearch.isFuzzy[1]"
-          active-color="#13ce66"
-          inactive-color="#ff4949"
-          active-text="模糊"
-          inactive-text="精确"
-          style="margin-left: 1vw"
-        ></el-switch>
+      <el-switch
+        v-model="bookSearch.isFuzzy[1]"
+        active-color="#13ce66"
+        inactive-color="#ff4949"
+        active-text="模糊"
+        inactive-text="精确"
+        style="margin-left: 1vw"
+      ></el-switch>
     </el-form-item>
     <el-form-item label="页数：">
       <el-input v-model="bookSearch.pages" style="width: 15vw"></el-input>
-        <el-switch
-          v-model="bookSearch.isFuzzy[2]"
-          active-color="#13ce66"
-          inactive-color="#ff4949"
-          active-text="模糊"
-          inactive-text="精确"
-          style="margin-left: 1vw"
-        ></el-switch>
+      <el-switch
+        v-model="bookSearch.isFuzzy[2]"
+        active-color="#13ce66"
+        inactive-color="#ff4949"
+        active-text="模糊"
+        inactive-text="精确"
+        style="margin-left: 1vw"
+      ></el-switch>
     </el-form-item>
     <el-form-item label="语言：">
-      <el-input v-model="bookSearch.bookLanguage" style="width: 15vw"></el-input>
-        <el-switch
-          v-model="bookSearch.isFuzzy[3]"
-          active-color="#13ce66"
-          inactive-color="#ff4949"
-          active-text="模糊"
-          inactive-text="精确"
-          style="margin-left: 1vw"
-        ></el-switch>
+      <el-input
+        v-model="bookSearch.bookLanguage"
+        style="width: 15vw"
+      ></el-input>
+      <el-switch
+        v-model="bookSearch.isFuzzy[3]"
+        active-color="#13ce66"
+        inactive-color="#ff4949"
+        active-text="模糊"
+        inactive-text="精确"
+        style="margin-left: 1vw"
+      ></el-switch>
     </el-form-item>
     <el-form-item label="ISBN：">
       <el-input v-model="bookSearch.isbn" style="width: 15vw"></el-input>
-        <el-switch
-          v-model="bookSearch.isFuzzy[4]"
-          active-color="#13ce66"
-          inactive-color="#ff4949"
-          active-text="模糊"
-          inactive-text="精确"
-          style="margin-left: 1vw"
-        ></el-switch>
+      <el-switch
+        v-model="bookSearch.isFuzzy[4]"
+        active-color="#13ce66"
+        inactive-color="#ff4949"
+        active-text="模糊"
+        inactive-text="精确"
+        style="margin-left: 1vw"
+      ></el-switch>
     </el-form-item>
     <el-form-item label="来源：">
       <el-input v-model="bookSearch.source" style="width: 15vw"></el-input>
-        <el-switch
-          v-model="bookSearch.isFuzzy[5]"
-          active-color="#13ce66"
-          inactive-color="#ff4949"
-          active-text="模糊"
-          inactive-text="精确"
-          style="margin-left: 1vw"
-        ></el-switch>
+      <el-switch
+        v-model="bookSearch.isFuzzy[5]"
+        active-color="#13ce66"
+        inactive-color="#ff4949"
+        active-text="模糊"
+        inactive-text="精确"
+        style="margin-left: 1vw"
+      ></el-switch>
     </el-form-item>
     <el-form-item label="出版日期：">
       <el-date-picker
@@ -357,10 +386,7 @@ function goToBook(name: string) {
             <span>{{ book.first.name }}</span>
             <div class="bottom clearfix">
               <time class="time">出版日期：{{ book.first.publishYear }}</time>
-              <el-button
-                type="primary"
-                @click="goToBook(book.first.name)"
-              >
+              <el-button type="primary" @click="goToBook(book.first.name)">
                 查看详情
               </el-button>
             </div>
@@ -376,10 +402,7 @@ function goToBook(name: string) {
             <span>{{ book.second.name }}</span>
             <div class="bottom clearfix">
               <time class="time">出版日期：{{ book.second.publishYear }}</time>
-              <el-button
-                type="primary"
-                @click="goToBook(book.second.name)"
-              >
+              <el-button type="primary" @click="goToBook(book.second.name)">
                 查看详情
               </el-button>
             </div>
@@ -395,10 +418,7 @@ function goToBook(name: string) {
             <span>{{ book.third.name }}</span>
             <div class="bottom clearfix">
               <time class="time">出版日期：{{ book.third.publishYear }}</time>
-              <el-button
-                type="primary"
-                @click="goToBook(book.third.name)"
-              >
+              <el-button type="primary" @click="goToBook(book.third.name)">
                 查看详情
               </el-button>
             </div>
@@ -412,7 +432,6 @@ function goToBook(name: string) {
 <style>
 .sidebar {
   width: 35vw;
-  height: 100vh;
   background-color: #b3b6b9;
 }
 
