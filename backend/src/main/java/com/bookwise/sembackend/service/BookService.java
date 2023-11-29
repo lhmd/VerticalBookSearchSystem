@@ -133,6 +133,7 @@ public class BookService {
                     }).build();
 
             SearchResponse<ESBook> search = client.search(searchRequest, ESBook.class);
+            log.info("Hit count: " + search.hits().hits().size());
             return search.hits().hits();
         } catch (Exception e) {
             log.error(e.getMessage());
@@ -193,17 +194,24 @@ public class BookService {
     }
 
     public List<String> getBookCategories() {
+        return getDistinctValues("category", "books");
+    }
+
+    public List<String> getBookLanguages() {
+        return getDistinctValues("bookLanguage", "books");
+    }
+    private List<String> getDistinctValues(String field, String index) {
         try {
             SearchResponse<ESBook> response = client.search(q -> q
-                            .index("books")
+                            .index(index)
                             .size(0)
                             .from(0)
-                            .aggregations("my", a -> a
+                            .aggregations(field, a -> a
                                     .terms(t -> t
-                                            .field("category.keyword")))
+                                            .field(field + ".keyword")))
 
                     , ESBook.class);
-            StringTermsAggregate terms = response.aggregations().get("my").sterms();
+            StringTermsAggregate terms = response.aggregations().get(field).sterms();
 
             List<String> categories = terms.buckets()
                     .array()
@@ -278,6 +286,7 @@ public class BookService {
         return null;
     }
 
+    @Deprecated
     private SearchResponse<ESBook> _search(String query, String field) throws IOException {
         SearchResponse<ESBook> search = client.search(s -> s
                         .index("books")

@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -21,6 +23,26 @@ public class ESBook {
     private String isbn;
     private String imageUrl;
     private String source;
+
+    private static final Map<String, String> LANGUAGE_CODE_MAP = new HashMap<>();
+
+    static {
+        LANGUAGE_CODE_MAP.put("en", "English");
+        LANGUAGE_CODE_MAP.put("es", "Spanish");
+        LANGUAGE_CODE_MAP.put("fr", "French");
+        LANGUAGE_CODE_MAP.put("de", "German");
+        LANGUAGE_CODE_MAP.put("zh", "Chinese");
+        LANGUAGE_CODE_MAP.put("ja", "Japanese");
+        LANGUAGE_CODE_MAP.put("ko", "Korean");
+        LANGUAGE_CODE_MAP.put("ru", "Russian");
+        LANGUAGE_CODE_MAP.put("ar", "Arabic");
+        LANGUAGE_CODE_MAP.put("hi", "Hindi");
+        LANGUAGE_CODE_MAP.put("pt", "Portuguese");
+        LANGUAGE_CODE_MAP.put("it", "Italian");
+        LANGUAGE_CODE_MAP.put("nl", "Dutch");
+        LANGUAGE_CODE_MAP.put("sv", "Swedish");
+        // Add more language code mappings as needed
+    }
 
     // Predefined lists of real book names, categories, and publishers for demonstration
     private static final String[] REAL_BOOK_NAMES = {
@@ -69,13 +91,24 @@ public class ESBook {
         String randomPublisher = getRandomRealPublisher();
         Integer randomPages = ThreadLocalRandom.current().nextInt(100, 1000); // Random pages between 100 and 1000
         Integer randomPublishYear = ThreadLocalRandom.current().nextInt(1900, 2023); // Random year between 1900 and 2023
-        String randomBookLanguage = "English"; // You can modify this as needed
+        String randomLanguageCode = getRandomLanguageCode();
+        // Map the language code to a language name
+        String randomBookLanguage = LANGUAGE_CODE_MAP.getOrDefault(randomLanguageCode, "Unknown");
         String randomISBN = generateRandomString(13); // Generating a random 13-character ISBN
         String randomImageUrl = generateRandomImageUrl();
         String randomSource = getRandomRealSource(); // Add this line to get a random real source
 
         return new ESBook(randomUuid, randomName, randomCategory, randomPublisher,
                 randomPages, randomPublishYear, randomBookLanguage, randomISBN, randomImageUrl, randomSource);
+    }
+
+    // Get a random language code from the predefined list
+    private static String getRandomLanguageCode() {
+        // Language codes based on http://www.lingoes.cn/zh/translator/langcode.htm
+        String[] languageCodes = {"en", "es", "fr", "de", "zh", "ja", "ko", "ru", "ar", "hi", "pt", "it", "nl", "sv"};
+
+        int randomIndex = ThreadLocalRandom.current().nextInt(languageCodes.length);
+        return languageCodes[randomIndex];
     }
 
     // Get a random real source from the predefined list
