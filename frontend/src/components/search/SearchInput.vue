@@ -138,12 +138,13 @@ async function loadBook() {
       var categoryString = router.currentRoute.value.query.category as string;
       var categoryArray = categoryString.split(",");
       bookSearch.category = categoryArray;
-      bookSearch.publisher = router.currentRoute.value.query.publisher as string;
+      bookSearch.publisher = router.currentRoute.value.query
+        .publisher as string;
       bookSearch.pages = router.currentRoute.value.query.pages as string;
-      bookSearch.publishYear =
-        router.currentRoute.value.query.publishYear as string;
-      bookSearch.bookLanguage =
-        router.currentRoute.value.query.bookLanguage as string;
+      bookSearch.publishYear = router.currentRoute.value.query
+        .publishYear as string;
+      bookSearch.bookLanguage = router.currentRoute.value.query
+        .bookLanguage as string;
       bookSearch.isbn = router.currentRoute.value.query.isbn as string;
       bookSearch.source = router.currentRoute.value.query.source as string;
       // isFuzzy解码
@@ -356,10 +357,12 @@ function goToBook(name: string) {
     <h2>{{ title }}</h2>
     <!-- 将bookStore中的内容展示出来 -->
     <el-col>
-      <el-row
-        class="book"
-      >
-        <el-card shadow="hover" style="width: 200px; margin: 10px" v-for="book in bookStore.Books">
+      <el-row class="book">
+        <el-card
+          shadow="hover"
+          style="width: 200px; margin: 10px"
+          v-for="book in bookStore.Books"
+        >
           <img
             :src="book.imageUrl"
             class="image"
