@@ -2,10 +2,7 @@ package com.bookwise.sembackend.controller;
 
 import co.elastic.clients.elasticsearch.core.search.Hit;
 import com.bookwise.sembackend.elastic_search.ESBook;
-import com.bookwise.sembackend.model.api.BookCategory;
-import com.bookwise.sembackend.model.api.RecommendBooks;
-import com.bookwise.sembackend.model.api.SearchReq;
-import com.bookwise.sembackend.model.api.SearchRes;
+import com.bookwise.sembackend.model.api.*;
 import com.bookwise.sembackend.service.BookService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,9 +39,10 @@ public class SearchController {
     @PostMapping("/search")
     public SearchRes search(@RequestBody SearchReq body) {
         List<Hit<ESBook>> hitBooks = bookService.proSearch(body, 100);
+
         ArrayList<ESBook> books = new ArrayList<>();
         for (Hit<ESBook> hit : hitBooks) {
-            System.out.println(hit);
+//            System.out.println(hit);
             books.add(hit.source());
         }
         return new SearchRes(false, "Not yet implement", books);
@@ -68,5 +66,11 @@ public class SearchController {
     public BookCategory bookCategory() {
         List<String> categories = bookService.getBookCategories();
         return new BookCategory(true, "Available book categories in database", categories);
+    }
+
+    @PostMapping("/bookLanguages")
+    public BookLanguages bookLanguages() {
+        List<String> bookLanguages = bookService.getBookLanguages();
+        return new BookLanguages(true, "Available book languages in database", bookLanguages);
     }
 }

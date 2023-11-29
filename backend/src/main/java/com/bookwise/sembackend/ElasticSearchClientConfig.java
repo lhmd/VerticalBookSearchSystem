@@ -9,9 +9,9 @@ import org.elasticsearch.client.RestClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.elasticsearch.repository.config.EnableElasticsearchRepositories;
 
 import java.util.List;
+
 
 @Configuration
 public class ElasticSearchClientConfig {
@@ -25,4 +25,5 @@ public class ElasticSearchClientConfig {
         ElasticsearchTransport transport = new RestClientTransport(client, new JacksonJsonpMapper());
         return new ElasticsearchClient(transport);
     }
+
 }
