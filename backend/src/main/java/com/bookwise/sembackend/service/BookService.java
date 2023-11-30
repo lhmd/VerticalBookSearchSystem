@@ -134,7 +134,6 @@ public class BookService {
         } catch (Exception e) {
             log.error(e.getMessage());
         }
-        System.out.println(body);
         return null;
     }
 
@@ -193,6 +192,10 @@ public class BookService {
         return getDistinctValues("category", "books");
     }
 
+    public List<String> getBookPublishers() {
+        return getDistinctValues("publisher", "books");
+    }
+
     public List<String> getBookLanguages() {
         return getDistinctValues("bookLanguage", "books");
     }
@@ -209,7 +212,7 @@ public class BookService {
                     , ESBook.class);
             StringTermsAggregate terms = response.aggregations().get(field).sterms();
 
-            List<String> categories = terms.buckets()
+            List<String> items = terms.buckets()
                     .array()
                     .stream()
                     .map(StringTermsBucket::key)
@@ -218,11 +221,9 @@ public class BookService {
                     .map(FieldValue::_toJsonString)
                     .toList();
 
-            for (String i : categories) {
-                System.out.println(i);
-            }
+            log.info("Hits: " + items.size());
 
-            return categories;
+            return items;
 
         } catch (Exception e) {
             log.error(e.getMessage());
