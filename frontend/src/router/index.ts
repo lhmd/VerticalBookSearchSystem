@@ -30,9 +30,9 @@ const router = createRouter({
       path: "/home",
       name: "profile",
       component: ProfileView,
-      // meta: {
-      //   requiresAuth: true, // Mark this route as requiring authentication
-      // },
+      meta: {
+        requiresAuth: true, // Mark this route as requiring authentication
+      },
     },
     {
       path: "/about",
@@ -43,17 +43,17 @@ const router = createRouter({
       path: "/search",
       name: "search",
       component: SearchView,
-      // meta: {
-      //   requiresAuth: true, // Mark this route as requiring authentication
-      // },
+      meta: {
+        requiresAuth: true, // Mark this route as requiring authentication
+      },
     },
     {
       path: "/unit",
       name: "unit",
       component: UnitView,
-      // meta: {
-      //   requiresAuth: true, // Mark this route as requiring authentication
-      // },
+      meta: {
+        requiresAuth: true, // Mark this route as requiring authentication
+      },
     },
   ],
 });
@@ -66,7 +66,7 @@ router.beforeEach((to, from, next) => {
       next();
     } else {
       // 用户未登录，重定向到登录页面或其他处理逻辑
-      ElMessage.warning("请重新登录！");
+      ElMessage.warning("请登录后使用！");
       next("/login");
     }
   } else {

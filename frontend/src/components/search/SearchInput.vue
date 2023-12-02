@@ -17,7 +17,7 @@ const bookSearch = reactive({
   name: "",
   category: [] as string[],
   publisher: "",
-  pages: "",
+  pages: 0,
   publishYear: "",
   bookLanguage: "",
   isbn: "",
@@ -49,8 +49,36 @@ const submitSearch = () => {
   // }
   // title.value = "搜索结果";
 
+  // 提取publishYear的开始和结束年份，格式为Tue Dec 12 2023 00:00:00 GMT+0800，将年份转换为整数
+  var publishYear = [];
+  // console.log(bookSearch.publishYear[0].toString().split(" ")[3]);
+  // 提取以空格分隔的字符串，取第四个元素，即年份
+  if (bookSearch.publishYear[0] != null) {
+    publishYear.push(parseInt(bookSearch.publishYear[0].toString().split(" ")[3]));
+  } else {
+    publishYear.push(0);
+  }
+  if (bookSearch.publishYear[1] != null) {
+    publishYear.push(parseInt(bookSearch.publishYear[1].toString().split(" ")[3]));
+  } else {
+    publishYear.push(9999);
+  }
+  // console.log(publishYearStart);
+
+  const send = {
+    name: bookSearch.name,
+    category: bookSearch.category,
+    publisher: bookSearch.publisher,
+    pages: bookSearch.pages,
+    publishYear: publishYear,
+    bookLanguage: bookSearch.bookLanguage,
+    isbn: bookSearch.isbn,
+    source: bookSearch.source,
+    isFuzzy: bookSearch.isFuzzy,
+  };
+  // console.log(send);
   axios
-    .post("http://localhost:6034/search", bookSearch)
+    .post("http://10.73.103.130:1212/api/search", send)
     .then((response) => {
       // console.log("后端返回的消息：", response.data);
       var isSearch = response.data.success;
@@ -131,6 +159,7 @@ async function loadBook() {
   // console.log(bookStore.Books);
   // title.value = "推荐书籍";
   try {
+    console.log(bookStore.Books);
     if (bookStore.Books.length > 0) {
       title.value = "搜索结果";
       bookSearch.name = router.currentRoute.value.query.name as string;
@@ -140,7 +169,7 @@ async function loadBook() {
       bookSearch.category = categoryArray;
       bookSearch.publisher = router.currentRoute.value.query
         .publisher as string;
-      bookSearch.pages = router.currentRoute.value.query.pages as string;
+      bookSearch.pages = parseInt(router.currentRoute.value.query.pages as string);
       bookSearch.publishYear = router.currentRoute.value.query
         .publishYear as string;
       bookSearch.bookLanguage = router.currentRoute.value.query
@@ -159,9 +188,10 @@ async function loadBook() {
       return;
     }
     const send = {
-      interest: userStore.interest,
+      category: userStore.interest,
     };
-    const response = await axios.post("http://localhost:6034/interest", send);
+    console.log(send);
+    const response = await axios.post("http://10.73.103.130:1212/api/interest", send);
     // console.log("后端返回的消息：", response.data);
     var isLoad = response.data.success;
     if (isLoad) {
@@ -195,13 +225,13 @@ async function loadCategory() {
   // }
 
   try {
-    const response = await axios.get("http://localhost:6034/category");
+    const response = await axios.post("http://10.73.103.130:1212/api/category");
     // console.log("后端返回的消息：", response.data);
     var isLoad = response.data.success;
     if (isLoad) {
-      // console.log(response.data.category);
+      // console.log(response.data);
       const bookStore = useBookStore();
-      category.value = response.data.category;
+      category.value = response.data.categories;
     } else {
       ElMessage.error("加载分类失败"); // Use ElMessage for error message
     }
@@ -228,29 +258,29 @@ const handleCheckedChange = (value: string[]) => {
 
 const shortcuts = [
   {
-    text: "Last week",
+    text: "Last year",
     value: () => {
       const end = new Date();
       const start = new Date();
-      start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
+      start.setTime(start.getTime() - 3600 * 1000 * 24 * 365);
       return [start, end];
     },
   },
   {
-    text: "Last month",
+    text: "Last 3 years",
     value: () => {
       const end = new Date();
       const start = new Date();
-      start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
+      start.setTime(start.getTime() - 3600 * 1000 * 24 * 365 * 3);
       return [start, end];
     },
   },
   {
-    text: "Last 3 months",
+    text: "Last 10 years",
     value: () => {
       const end = new Date();
       const start = new Date();
-      start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
+      start.setTime(start.getTime() - 3600 * 1000 * 24 * 365 * 10);
       return [start, end];
     },
   },
@@ -340,7 +370,7 @@ function goToBook(name: string) {
     <el-form-item label="出版日期：">
       <el-date-picker
         v-model="bookSearch.publishYear"
-        type="daterange"
+        type="monthrange"
         unlink-panels
         range-separator="To"
         start-placeholder="Start date"

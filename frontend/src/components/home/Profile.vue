@@ -4,6 +4,8 @@ import { reactive, ref } from "vue";
 import { ElMessage } from "element-plus";
 import axios from "axios";
 import router from "@/router";
+import { useBookStore } from "@/stores/book";
+import { onBeforeMount } from "vue";
 
 const userStore = useUserStore();
 const user = reactive({
@@ -35,7 +37,7 @@ async function modifyInfor() {
     };
     // console.log("发送给后端的消息：", send);
     const response = await axios.post(
-      "http://localhost:6034/profile/update",
+      "http://10.73.103.130:1212/profile/update",
       send
     );
     // console.log("后端返回的消息：", response.data);
@@ -72,7 +74,7 @@ async function modifyPassword() {
       newPassword: password.password,
     };
     const response = await axios.post(
-      "http://localhost:6034/profile/update-password",
+      "http://10.73.103.130:1212/profile/update-password",
       send
     );
     var isModified = response.data.success;
@@ -89,6 +91,46 @@ async function modifyPassword() {
     console.error("请求出错：", error);
   }
 }
+let category = ref([]);
+async function loadCategory() {
+  // 测试
+  // for (var i = 0; i < 4; i++) {
+  //   category.value.push("测试分类" + i);
+  // }
+
+  try {
+    const response = await axios.post("http://10.73.103.130:1212/api/category");
+    // console.log("后端返回的消息：", response.data);
+    var isLoad = response.data.success;
+    if (isLoad) {
+      // console.log(response.data);
+      const bookStore = useBookStore();
+      category.value = response.data.categories;
+    } else {
+      ElMessage.error("加载分类失败"); // Use ElMessage for error message
+    }
+  } catch (error) {
+    ElMessage.error("加载分类失败");
+  }
+}
+const gender = [
+  {
+    value: "MALE",
+    label: "男",
+  }, 
+  {
+    value: "FEMALE",
+    label: "女",
+  }, 
+  {
+    value: "UNKNOWN",
+    label: "其他",
+  },
+]
+onBeforeMount(() => {
+  loadCategory();
+});
+
 </script>
 
 <template>
@@ -155,7 +197,10 @@ async function modifyPassword() {
         <el-input v-model="user.username" autocomplete="off" />
       </el-form-item>
       <el-form-item label="gender" :label-width="formLabelWidth">
-        <el-input v-model="user.gender" autocomplete="off" />
+        <!-- <el-input v-model="user.gender" autocomplete="off" /> -->
+        <el-select v-model="user.gender">
+          <el-option v-for="item in gender" :key="item.value" :label="item.label" :value="item.value"></el-option>
+        </el-select>
       </el-form-item>
       <el-form-item label="email" :label-width="formLabelWidth">
         <el-input v-model="user.email" autocomplete="off" />
@@ -167,7 +212,10 @@ async function modifyPassword() {
         <el-input v-model="user.address" autocomplete="off" />
       </el-form-item>
       <el-form-item label="interest" :label-width="formLabelWidth">
-        <el-input v-model="user.interest" autocomplete="off" />
+        <!-- <el-input v-model="user.interest" autocomplete="off" /> -->
+        <el-select v-model="user.interest" multiple>
+          <el-option v-for="item in category" :key="item" :label="item" :value="item"></el-option>
+        </el-select>
       </el-form-item>
     </el-form>
     <template #footer>

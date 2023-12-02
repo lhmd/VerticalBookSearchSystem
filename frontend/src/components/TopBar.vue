@@ -24,7 +24,7 @@
               <operation />
             </el-icon>
           </template>
-          <el-menu-item index="/search">Search</el-menu-item>
+          <el-menu-item index="search">Search</el-menu-item>
           <el-menu-item index="/home">Home</el-menu-item>
           <el-menu-item index="logout">Logout</el-menu-item>
         </el-sub-menu>
@@ -38,8 +38,10 @@ import { ref, onMounted, onBeforeUnmount } from "vue";
 import { useUserStore } from "@/stores/user";
 import { ElMessage } from "element-plus";
 import router from "@/router";
+import { useBookStore } from "@/stores/book";
 
 const userStore = useUserStore();
+const bookStore = useBookStore();
 const isMobile = ref(false);
 
 const checkMobile = () => {
@@ -66,9 +68,13 @@ const handleSelect = (index: string) => {
     } else {
       userStore.setAuthenticationStatus(false);
       userStore.clearUserCredentials();
+      bookStore.clearBooks();
       ElMessage.success("成功退出登录！");
     }
     router.push("/login");
+  } else if (index === "/search") {
+    bookStore.clearBooks();
+    router.push("/search");
   }
 };
 </script>

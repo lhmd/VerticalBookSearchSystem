@@ -26,7 +26,7 @@ async function onSubmit() {
     }
     // console.log(UserLogin);
     const response = await axios.post(
-      "http://localhost:6034/auth/login",
+      "http://10.73.103.130:1212/auth/login",
       UserLogin
     );
     // console.log("后端返回的消息：", response.data);

@@ -42,7 +42,6 @@ function loadBook(name: string) {
       break;
     }
   }
-  loadSimilarBooks(book.category);
 }
 
 async function loadSimilarBooks(category: string) {
@@ -78,13 +77,14 @@ async function loadSimilarBooks(category: string) {
     // ];
     // console.log(book);
     const send = {
-      interest: category,
+      category: category,
     };
-    const response = await axios.post("http://localhost:6034/interest", send);
+    const response = await axios.post("http://10.73.103.130:1212/api/interest", send);
     // console.log("后端返回的消息：", response.data);
     var isLoad = response.data.success;
     if (isLoad) {
       similarBooks = response.data.books;
+      console.log(similarBooks);
     } else {
       ElMessage.error("Failed to load similar books");
     }
@@ -106,14 +106,15 @@ onBeforeMount(() => {
   let name = router.currentRoute.value.query.name;
   // console.log("aa", name);
   loadBook(name as string);
+  loadSimilarBooks(book.category);
 });
 </script>
 
 <template>
   <div class="book-page">
     <div class="book-info">
-      <div style="font-size: 1.5rem; font-weight: 600; margin-bottom: 15px">
-        name: {{ book.name }}
+      <div style="font-size: 2rem; font-weight: 600; margin-bottom: 15px">
+        {{ book.name }}
       </div>
       <div class="content">
         <div class="imageInformation">

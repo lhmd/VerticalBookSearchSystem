@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import { reactive, ref, onMounted, onBeforeUnmount } from "vue";
+import { reactive, ref, onBeforeMount, onBeforeUnmount } from "vue";
 import type { FormProps } from "element-plus";
 import { useRouter } from "vue-router";
 import { ElMessage } from "element-plus";
 import axios from "axios";
+import { useBookStore } from "@/stores/book";
 
 const Router = useRouter();
 const labelPosition = ref<FormProps["labelPosition"]>("right");
-const size = ref("middle");
 
 const UserRegister = reactive({
   username: "",
@@ -19,6 +19,10 @@ const UserRegister = reactive({
   address: "",
   interest: "",
 });
+
+function onRegister() {
+  Router.push("/login");
+}
 
 async function onSubmit() {
   try {
@@ -36,9 +40,9 @@ async function onSubmit() {
       return;
     }
 
-    // console.log(UserRegister);
+    console.log(UserRegister);
     const response = await axios.post(
-      "http://localhost:6034/auth/register",
+      "http://10.73.103.130:1212/auth/register",
       UserRegister
     );
     // console.log("后端返回的消息：", response.data);
@@ -54,6 +58,49 @@ async function onSubmit() {
     console.error("请求出错：", error);
   }
 }
+
+let category = ref([]);
+async function loadCategory() {
+  // 测试
+  // for (var i = 0; i < 4; i++) {
+  //   category.value.push("测试分类" + i);
+  // }
+
+  try {
+    const response = await axios.post("http://10.73.103.130:1212/api/category");
+    // console.log("后端返回的消息：", response.data);
+    var isLoad = response.data.success;
+    if (isLoad) {
+      // console.log(response.data);
+      const bookStore = useBookStore();
+      category.value = response.data.categories;
+    } else {
+      ElMessage.error("加载分类失败"); // Use ElMessage for error message
+    }
+  } catch (error) {
+    ElMessage.error("加载分类失败");
+  }
+}
+
+const gender = [
+  {
+    value: "MALE",
+    label: "男",
+  }, 
+  {
+    value: "FEMALE",
+    label: "女",
+  }, 
+  {
+    value: "UNKNOWN",
+    label: "其他",
+  },
+]
+
+onBeforeMount(() => {
+  loadCategory();
+});
+
 </script>
 
 <template>
@@ -66,7 +113,6 @@ async function onSubmit() {
       :label-position="labelPosition"
       label-width="100px"
       :model="UserRegister"
-      :size="size"
     >
       <el-form-item
         label="用户名"
@@ -106,18 +152,24 @@ async function onSubmit() {
         <el-input v-model="UserRegister.phone" />
       </el-form-item>
       <el-form-item label="性别">
-        <el-input v-model="UserRegister.gender" />
+        <el-select v-model="UserRegister.gender">
+          <el-option v-for="item in gender" :key="item.value" :label="item.label" :value="item.value"></el-option>
+        </el-select>
       </el-form-item>
       <el-form-item label="地址">
         <el-input v-model="UserRegister.address" />
       </el-form-item>
       <el-form-item label="兴趣">
-        <el-input v-model="UserRegister.interest" />
+        <el-select v-model="UserRegister.interest">
+          <el-option v-for="item in category" :key="item" :label="item" :value="item"></el-option>
+        </el-select>
       </el-form-item>
       <el-form-item>
         <el-button type="success" @click="onSubmit" size="large" round
           >提 交</el-button
         >
+        <el-button type="primary" @click="onRegister" size="large" round
+          >返 回</el-button>
       </el-form-item>
     </el-form>
   </div>
