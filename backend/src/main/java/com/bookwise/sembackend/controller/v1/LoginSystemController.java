@@ -1,4 +1,4 @@
-package com.bookwise.sembackend.controller;
+package com.bookwise.sembackend.controller.v1;
 
 import com.bookwise.sembackend.db_model.User;
 import com.bookwise.sembackend.elastic_search.ESBook;

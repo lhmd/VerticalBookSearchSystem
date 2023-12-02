@@ -1,4 +1,4 @@
-package com.bookwise.sembackend.controller;
+package com.bookwise.sembackend.controller.v1;
 
 import co.elastic.clients.elasticsearch.core.search.Hit;
 import com.bookwise.sembackend.elastic_search.ESBook;

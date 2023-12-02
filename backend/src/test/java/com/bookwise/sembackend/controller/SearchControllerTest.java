@@ -1,6 +1,7 @@
     package com.bookwise.sembackend.controller;
 
 import com.alibaba.fastjson2.JSONArray;
+import com.bookwise.sembackend.controller.v1.SearchController;
 import com.bookwise.sembackend.elastic_search.ESBook;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
