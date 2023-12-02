@@ -1,6 +1,7 @@
-package com.bookwise.sembackend.controller;
+package com.bookwise.sembackend.controller.v2;
 
 import co.elastic.clients.elasticsearch.core.search.Hit;
+import com.bookwise.sembackend.dev.ExceptionEnum;
 import com.bookwise.sembackend.elastic_search.ESBook;
 import com.bookwise.sembackend.model.api.*;
 import com.bookwise.sembackend.service.BookService;
@@ -9,13 +10,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/v2/api")
 @Slf4j
-public class SearchController {
+public class SearchControllerV2 {
     @Autowired
     private BookService bookService;
 
@@ -41,19 +43,14 @@ public class SearchController {
     }
 
     @PostMapping("/search")
-    public SearchRes search(@RequestBody SearchReq body) {
-        try {
-            System.out.println(body);
-            List<Hit<ESBook>> hitBooks = bookService.proSearch(body, 100);
+    public ResultBox search(@RequestBody SearchReq body) throws IOException {
+        List<Hit<ESBook>> hitBooks = bookService.proSearch(body, 100);
 
-            ArrayList<ESBook> books = new ArrayList<>();
-            for (Hit<ESBook> hit : hitBooks) {
-                books.add(hit.source());
-            }
-            return new SearchRes(true, "Search result", books);
-        } catch (Exception e) {
-            return new SearchRes(false, messagesError, null);
+        ArrayList<ESBook> books = new ArrayList<>();
+        for (Hit<ESBook> hit : hitBooks) {
+            books.add(hit.source());
         }
+        return ResultBox.success(books);
 
     }
 
@@ -61,55 +58,55 @@ public class SearchController {
     public ResultBox addBook(@RequestBody ESBook book) {
         try {
             bookService.addBook(book);
-            return new ResultBox(true, "Successfully added book");
+            return ResultBox.success();
         } catch (Exception e) {
-            log.error("Message: " + e.getMessage());
-            return new ResultBox(false, messagesError);
+            log.error(e.getMessage());
+            return ResultBox.error(ExceptionEnum.INTERNAL_SERVER_ERROR);
         }
     }
 
     @PostMapping("/interest")
-    public RecommendBooks interest(@RequestBody Interest.InterestParams params) {
+    public ResultBox interest(@RequestBody Interest.InterestParams params) {
         try {
             List<ESBook> books = bookService.recommendBooks(5, params.category);
-            return new RecommendBooks(true, "Recommended books for user", books);
+            return ResultBox.success(books);
         } catch (Exception e) {
             log.error(e.getMessage());
-            return new RecommendBooks(false, messagesError, null);
+            return ResultBox.error(ExceptionEnum.INTERNAL_SERVER_ERROR);
         }
     }
 
     @PostMapping("/category")
-    public BookCategory bookCategory() {
+    public ResultBox bookCategory() {
         try {
             List<String> categories = bookService.getBookCategories();
-            return new BookCategory(true, "Available book categories in database", categories);
+            return ResultBox.success(categories);
         } catch (Exception e) {
-            log.error("Message: " + e.getMessage());
-            return new BookCategory(false, messagesError, null);
+            log.error(e.getMessage());
+            return ResultBox.error(ExceptionEnum.INTERNAL_SERVER_ERROR);
         }
 
     }
 
     @PostMapping("/bookPublishers")
-    public BookPublishers bookPublishers() {
+    public ResultBox bookPublishers() {
         try {
             List<String> publishers = bookService.getBookPublishers();
-            return new BookPublishers(true, "Available book publishers in database", publishers);
+            return ResultBox.success(publishers);
         } catch (Exception e) {
-            log.error("Message: " + e.getMessage());
-            return new BookPublishers(false, messagesError, null);
+            log.error(e.getMessage());
+            return ResultBox.error(ExceptionEnum.INTERNAL_SERVER_ERROR);
         }
     }
 
     @PostMapping("/bookLanguages")
-    public BookLanguages bookLanguages() {
+    public ResultBox bookLanguages() {
         try {
             List<String> bookLanguages = bookService.getBookLanguages();
-            return new BookLanguages(true, "Available book languages in database", bookLanguages);
+            return ResultBox.success(bookLanguages);
         } catch (Exception e) {
-            log.error("Message: " + e.getMessage());
-            return new BookLanguages(false, messagesError, null);
+            log.error(e.getMessage());
+            return ResultBox.error(ExceptionEnum.INTERNAL_SERVER_ERROR);
         }
     }
 }
