@@ -21,6 +21,16 @@ public class Login extends ResultBox {
         }
     }
 
+    public static class ForgetPasswordRequestParams {
+        public String email;
+    }
+
+    public static class ForgetPasswordVerifyParams {
+        public String code;
+        public String email;
+        public String password;
+    }
+
     public Login(boolean success, User user, List<ESBook> book) {
         super(success, "");
         this.user = user;

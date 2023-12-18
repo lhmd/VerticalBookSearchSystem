@@ -8,6 +8,8 @@ import com.bookwise.sembackend.model.api.Register;
 import com.bookwise.sembackend.model.api.ResultBox;
 import com.bookwise.sembackend.repository.UserRepository;
 import com.bookwise.sembackend.service.BookService;
+import com.bookwise.sembackend.service.EmailService;
+import com.bookwise.sembackend.service.VerificationUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -27,6 +29,9 @@ public class LoginSystemControllerV2 {
 
     @Autowired
     private BookService bookService;
+
+    @Autowired
+    private EmailService emailService;
 
     @PostMapping("/login")
     public ResultBox login(@RequestBody Login.LoginParams params) {
@@ -66,8 +71,34 @@ public class LoginSystemControllerV2 {
         );
         userRepository.save(newUser);
         return ResultBox.success(newUser);
-
     }
+
+    @PostMapping("/forget-password/request")
+    public ResultBox forgetPasswordRequest(@RequestBody Login.ForgetPasswordRequestParams params) {
+        log.info("POST: /forget-password/request");
+        User user = userRepository.findUserByEmail(params.email);
+        if (user == null) return ResultBox.error(ExceptionEnum.NOT_FOUND);
+        String code = VerificationUtils.populate(params.email);
+        String mailBody = String.format("Your BookWise verification code: %s, please do not share to others.", code);
+        emailService.sendEmail(
+                params.email,
+                String.format("Reset Password for User %s", user.getUsername()),
+                mailBody
+        );
+        return ResultBox.success();
+    }
+
+    @PostMapping("/forget-password/verify")
+    public ResultBox forgetPasswordVerify(@RequestBody Login.ForgetPasswordVerifyParams params) {
+        log.info("POST: /forget-password/verify");
+        boolean result = VerificationUtils.verify(params.email, params.code);
+        if (!result) return ResultBox.error("验证失败！");
+        User user = userRepository.findUserByEmail(params.email);
+        user.setPassword(params.password);
+        userRepository.save(user);
+        return ResultBox.success(user);
+    }
+
 }
 
 
