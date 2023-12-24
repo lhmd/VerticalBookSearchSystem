@@ -71,7 +71,7 @@ public class SearchController {
     @PostMapping("/interest")
     public RecommendBooks interest(@RequestBody Interest.InterestParams params) {
         try {
-            List<ESBook> books = bookService.recommendBooks(5, params.category);
+            List<ESBook> books = bookService.recommendBooks(8, params.category);
             return new RecommendBooks(true, "Recommended books for user", books);
         } catch (Exception e) {
             log.error(e.getMessage());

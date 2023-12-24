@@ -31,7 +31,7 @@ public class SearchControllerTest {
     }
     @Test
     public void test() {
-        String content = readFile("JsonBookDownloader/books_updated.json");
+        String content = readFile("JsonBookDownloader/proccessed_data.json");
         List<ESBook> books = JSONArray.parseArray(content, ESBook.class);
         System.out.println(books.size());
         assert !books.isEmpty();
