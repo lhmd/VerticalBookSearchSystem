@@ -117,20 +117,19 @@ const gender = [
   {
     value: "MALE",
     label: "男",
-  }, 
+  },
   {
     value: "FEMALE",
     label: "女",
-  }, 
+  },
   {
     value: "UNKNOWN",
     label: "其他",
   },
-]
+];
 onBeforeMount(() => {
   loadCategory();
 });
-
 </script>
 
 <template>
@@ -199,7 +198,12 @@ onBeforeMount(() => {
       <el-form-item label="gender" :label-width="formLabelWidth">
         <!-- <el-input v-model="user.gender" autocomplete="off" /> -->
         <el-select v-model="user.gender">
-          <el-option v-for="item in gender" :key="item.value" :label="item.label" :value="item.value"></el-option>
+          <el-option
+            v-for="item in gender"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+          ></el-option>
         </el-select>
       </el-form-item>
       <el-form-item label="email" :label-width="formLabelWidth">
@@ -213,8 +217,13 @@ onBeforeMount(() => {
       </el-form-item>
       <el-form-item label="interest" :label-width="formLabelWidth">
         <!-- <el-input v-model="user.interest" autocomplete="off" /> -->
-        <el-select v-model="user.interest" multiple>
-          <el-option v-for="item in category" :key="item" :label="item" :value="item"></el-option>
+        <el-select v-model="user.interest">
+          <el-option
+            v-for="item in category"
+            :key="item"
+            :label="item"
+            :value="item"
+          ></el-option>
         </el-select>
       </el-form-item>
     </el-form>

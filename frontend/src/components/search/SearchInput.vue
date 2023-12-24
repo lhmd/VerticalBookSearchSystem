@@ -31,35 +31,22 @@ const isIndeterminate = ref(true);
 
 // 提交
 const submitSearch = () => {
-  // 测试
-  // console.log(bookSearch);
-  // bookStore.clearBooks();
-  // for (var i = 0; i < 10; i++) {
-  //   bookStore.addBook(
-  //     "测试书籍",
-  //     "测试分类",
-  //     "测试出版社",
-  //     12,
-  //     1999,
-  //     "测试语言",
-  //     "测试ISBN",
-  //     "测试来源",
-  //     "https://files.catbox.moe/03zgjn.jpg"
-  //   );
-  // }
-  // title.value = "搜索结果";
 
   // 提取publishYear的开始和结束年份，格式为Tue Dec 12 2023 00:00:00 GMT+0800，将年份转换为整数
   var publishYear = [];
   // console.log(bookSearch.publishYear[0].toString().split(" ")[3]);
   // 提取以空格分隔的字符串，取第四个元素，即年份
   if (bookSearch.publishYear[0] != null) {
-    publishYear.push(parseInt(bookSearch.publishYear[0].toString().split(" ")[3]));
+    publishYear.push(
+      parseInt(bookSearch.publishYear[0].toString().split(" ")[3])
+    );
   } else {
     publishYear.push(0);
   }
   if (bookSearch.publishYear[1] != null) {
-    publishYear.push(parseInt(bookSearch.publishYear[1].toString().split(" ")[3]));
+    publishYear.push(
+      parseInt(bookSearch.publishYear[1].toString().split(" ")[3])
+    );
   } else {
     publishYear.push(9999);
   }
@@ -98,6 +85,7 @@ const submitSearch = () => {
             response.data.books[i].imageUrl
           );
         }
+        bookStore.removeDuplicateBooks();
         title.value = "搜索结果";
         // 将isFuzzy转换为字符串
         var isFuzzyString = "";
@@ -141,35 +129,21 @@ const submitSearch = () => {
 };
 
 async function loadBook() {
-  // 测试
-  // bookStore.clearBooks();
-  // for (var i = 0; i < 12; i++) {
-  //   bookStore.addBook(
-  //     "测试书籍",
-  //     "测试分类",
-  //     "测试出版社",
-  //     12,
-  //     1999,
-  //     "测试语言",
-  //     "测试ISBN",
-  //     "测试来源",
-  //     "https://files.catbox.moe/03zgjn.jpg"
-  //   );
-  // }
-  // console.log(bookStore.Books);
-  // title.value = "推荐书籍";
   try {
-    console.log(bookStore.Books);
-    if (bookStore.Books.length > 0) {
+    // console.log(bookStore.Books);
+    if (bookStore.Books.length > 0 && Object.keys(router.currentRoute.value.query).length) {
       title.value = "搜索结果";
       bookSearch.name = router.currentRoute.value.query.name as string;
       // category解码
-      var categoryString = router.currentRoute.value.query.category as string;
-      var categoryArray = categoryString.split(",");
-      bookSearch.category = categoryArray;
+      var categoryString = router.currentRoute.value.query.category;
+      // console.log("string", categoryString);
+      // var categoryArray = categoryString.split(",");
+      bookSearch.category = categoryString as string[];
       bookSearch.publisher = router.currentRoute.value.query
         .publisher as string;
-      bookSearch.pages = parseInt(router.currentRoute.value.query.pages as string);
+      bookSearch.pages = parseInt(
+        router.currentRoute.value.query.pages as string
+      );
       bookSearch.publishYear = router.currentRoute.value.query
         .publishYear as string;
       bookSearch.bookLanguage = router.currentRoute.value.query
@@ -185,13 +159,17 @@ async function loadBook() {
           bookSearch.isFuzzy[i] = false;
         }
       }
+      // console.log("bookSearch", bookSearch);
       return;
     }
     const send = {
       category: userStore.interest,
     };
     console.log(send);
-    const response = await axios.post("http://10.73.103.130:1212/api/interest", send);
+    const response = await axios.post(
+      "http://10.73.103.130:1212/api/interest",
+      send
+    );
     // console.log("后端返回的消息：", response.data);
     var isLoad = response.data.success;
     if (isLoad) {
@@ -210,6 +188,7 @@ async function loadBook() {
           response.data.books[i].imageUrl
         );
       }
+      bookStore.removeDuplicateBooks();
     } else {
       ElMessage.error("加载书籍失败"); // Use ElMessage for error message
     }
@@ -219,10 +198,6 @@ async function loadBook() {
 }
 
 async function loadCategory() {
-  // 测试
-  // for (var i = 0; i < 4; i++) {
-  //   category.value.push("测试分类" + i);
-  // }
 
   try {
     const response = await axios.post("http://10.73.103.130:1212/api/category");
@@ -230,7 +205,6 @@ async function loadCategory() {
     var isLoad = response.data.success;
     if (isLoad) {
       // console.log(response.data);
-      const bookStore = useBookStore();
       category.value = response.data.categories;
     } else {
       ElMessage.error("加载分类失败"); // Use ElMessage for error message
@@ -336,17 +310,6 @@ function goToBook(name: string) {
         style="margin-left: 1vw"
       ></el-switch>
     </el-form-item>
-    <el-form-item label="页数：">
-      <el-input v-model="bookSearch.pages" style="width: 15vw"></el-input>
-      <el-switch
-        v-model="bookSearch.isFuzzy[2]"
-        active-color="#13ce66"
-        inactive-color="#ff4949"
-        active-text="模糊"
-        inactive-text="精确"
-        style="margin-left: 1vw"
-      ></el-switch>
-    </el-form-item>
     <el-form-item label="来源：">
       <el-input v-model="bookSearch.source" style="width: 15vw"></el-input>
       <el-switch
@@ -357,6 +320,9 @@ function goToBook(name: string) {
         inactive-text="精确"
         style="margin-left: 1vw"
       ></el-switch>
+    </el-form-item>
+    <el-form-item label="页数：">
+      <el-input v-model="bookSearch.pages" style="width: 15vw"></el-input>
     </el-form-item>
     <el-form-item label="语言：">
       <el-input
@@ -398,15 +364,19 @@ function goToBook(name: string) {
             class="image"
             style="width: 160px; height: 200px"
           />
-          <div style="padding: 14px">
-            <span>{{ book.name }}</span>
+          <div class="descriptive">
+            <!-- 只显示name的前20个字符，后面的为省略号，如果不超过20个字符则没有省略号 -->
+            <span class="name"
+              >{{ book.name.length > 20
+                ? book.name.substring(0, 20) + "..."
+                : book.name }}</span>
             <div class="bottom clearfix">
               <time class="time">出版日期：{{ book.publishYear }}</time>
-              <el-button type="primary" @click="goToBook(book.name)">
-                查看详情
-              </el-button>
             </div>
           </div>
+              <el-button type="primary" @click="goToBook(book.name)" class="seeButton">
+                查看详情
+              </el-button>
         </el-card>
       </el-row>
     </el-col>
@@ -426,5 +396,17 @@ function goToBook(name: string) {
 
 .el-input-wrapper {
   width: 5vw;
+}
+
+.descriptive {
+  padding: 14px;
+  /* 长宽均为固定值 */
+  width: 160px;
+  height: 70px;
+}
+
+.seeButton {
+  bottom: 5vh;
+  margin-left: 2vw;
 }
 </style>

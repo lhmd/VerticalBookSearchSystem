@@ -18,78 +18,55 @@ interface Book {
 }
 const bookStore = useBookStore();
 let book: Book;
-let similarBooks: Book[] = [];
 
 function loadBook(name: string) {
-  // bookStore.addBook(
-  //   "The Art of Computer Programming, Vol. 1: Fundamental Algorithms",
-  //   "Computer Science",
-  //   "Addison-Wesley Professional",
-  //   672,
-  //   1997,
-  //   "English",
-  //   "9780201896831",
-  //   "https://images-na.ssl-images-amazon.com/images/I/41p1WtVbKZL._SX379_BO1,204,203,200_.jpg",
-  //   "https://files.catbox.moe/03zgjn.jpg"
-  // );
-  // book = bookStore.Books[0];
-  // name = "The Art of Computer Programming, Vol. 1: Fundamental Algorithms";
-
   // console.log(bookStore.Books);
   for (let i = 0; i < bookStore.Books.length; i++) {
     if (bookStore.Books[i].name === name) {
       book = bookStore.Books[i];
-      break;
+      return;
+    }
+  }
+  for (let i = 0; i < bookStore.similarBooks.length; i++) {
+    if (bookStore.similarBooks[i].name === name) {
+      book = bookStore.similarBooks[i];
+      return;
     }
   }
 }
 
 async function loadSimilarBooks(category: string) {
   try {
-    // 测试
-    // similarBooks = [
-    //   {
-    //     name: "The Art of Computer Programming, Vol. 2: Seminumerical Algorithms",
-    //     category: "Computer Science",
-    //     publisher: "Addison-Wesley Professional",
-    //     pages: 784,
-    //     publishYear: 1997,
-    //     BookLanguage: "English",
-    //     ISBN: "9780201896848",
-    //     source:
-    //       "https://www.amazon.com/Computer-Programming-Vol-Seminumerical-Algorithms/dp/0201896842",
-    //     imageUrl:
-    //       "https://files.catbox.moe/03zgjn.jpg",
-    //   },
-    //   {
-    //     name: "The Art of Computer Programming, Vol. 3: Sorting and Searching",
-    //     category: "Computer Science",
-    //     publisher: "Addison-Wesley Professional",
-    //     pages: 800,
-    //     publishYear: 1997,
-    //     BookLanguage: "English",
-    //     ISBN: "9780201896855",
-    //     source:
-    //       "https://www.amazon.com/Computer-Programming-Vol-Sorting-Searching/dp/0201896850",
-    //     imageUrl:
-    //       "https://files.catbox.moe/03zgjn.jpg",
-    //   },
-    // ];
     // console.log(book);
     const send = {
       category: category,
     };
-    const response = await axios.post("http://10.73.103.130:1212/api/interest", send);
-    // console.log("后端返回的消息：", response.data);
+    const response = await axios.post(
+      "http://10.73.103.130:1212/api/interest",
+      send
+    );
+    console.log("后端返回的消息：", response.data);
     var isLoad = response.data.success;
     if (isLoad) {
-      similarBooks = response.data.books;
-      console.log(similarBooks);
+      bookStore.clearSimilarBooks();
+      for (let i = 0; i < 4; i++) {
+        bookStore.addSimilarBook(
+          response.data.books[i].name,
+          response.data.books[i].category,
+          response.data.books[i].publisher,
+          response.data.books[i].pages,
+          response.data.books[i].publishYear,
+          response.data.books[i].BookLanguage,
+          response.data.books[i].isbn,
+          response.data.books[i].source,
+          response.data.books[i].imageUrl
+        );
+      }
     } else {
-      ElMessage.error("Failed to load similar books");
+      ElMessage.error("加载相似书籍失败");
     }
   } catch (error) {
-    ElMessage.error("Failed to load similar books");
+    ElMessage.error("加载相似书籍失败");
   }
 }
 
@@ -100,6 +77,8 @@ function goToBook(book: Book) {
       name: book.name,
     },
   });
+  loadBook(book.name as string);
+  loadSimilarBooks(book.category);
 }
 
 onBeforeMount(() => {
@@ -127,7 +106,9 @@ onBeforeMount(() => {
           <div class="categories">Published Year: {{ book.publishYear }}</div>
           <div class="categories">Language: {{ book.BookLanguage }}</div>
           <div class="categories">ISBN: {{ book.ISBN }}</div>
-          <div class="categories">Source: {{ book.source }}</div>
+          <div class="categories">
+            <a :href="book.source" target="_blank">Source</a>
+          </div>
         </div>
       </div>
     </div>
@@ -135,13 +116,14 @@ onBeforeMount(() => {
     <div class="similar-books">
       <div class="text">相似书籍</div>
       <div class="content">
-        <div class="similar-book" v-for="book in similarBooks" :key="book.name">
+        <div class="similar-book" v-for="book in bookStore.similarBooks" :key="book.name">
           <img
             :src="book.imageUrl"
             alt="Book Cover"
             class="book-cover"
             @click="goToBook(book)"
           />
+          <!-- <div class="similar-book-name">{{ book.name }}</div> -->
         </div>
       </div>
     </div>
@@ -207,6 +189,7 @@ onBeforeMount(() => {
   margin-top: 2vh;
   margin-left: 1vw;
   margin-right: 1vw;
+  margin-bottom: 1vw;
   flex-direction: row;
 }
 

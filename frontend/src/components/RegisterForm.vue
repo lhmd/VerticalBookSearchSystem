@@ -86,21 +86,20 @@ const gender = [
   {
     value: "MALE",
     label: "男",
-  }, 
+  },
   {
     value: "FEMALE",
     label: "女",
-  }, 
+  },
   {
     value: "UNKNOWN",
     label: "其他",
   },
-]
+];
 
 onBeforeMount(() => {
   loadCategory();
 });
-
 </script>
 
 <template>
@@ -153,7 +152,12 @@ onBeforeMount(() => {
       </el-form-item>
       <el-form-item label="性别">
         <el-select v-model="UserRegister.gender">
-          <el-option v-for="item in gender" :key="item.value" :label="item.label" :value="item.value"></el-option>
+          <el-option
+            v-for="item in gender"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+          ></el-option>
         </el-select>
       </el-form-item>
       <el-form-item label="地址">
@@ -161,7 +165,12 @@ onBeforeMount(() => {
       </el-form-item>
       <el-form-item label="兴趣">
         <el-select v-model="UserRegister.interest">
-          <el-option v-for="item in category" :key="item" :label="item" :value="item"></el-option>
+          <el-option
+            v-for="item in category"
+            :key="item"
+            :label="item"
+            :value="item"
+          ></el-option>
         </el-select>
       </el-form-item>
       <el-form-item>
@@ -169,7 +178,8 @@ onBeforeMount(() => {
           >提 交</el-button
         >
         <el-button type="primary" @click="onRegister" size="large" round
-          >返 回</el-button>
+          >返 回</el-button
+        >
       </el-form-item>
     </el-form>
   </div>

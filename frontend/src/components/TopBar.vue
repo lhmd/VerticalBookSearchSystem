@@ -15,9 +15,15 @@
         @select="handleSelect"
       >
         <div class="flex-grow"></div>
-        <el-menu-item index="/search" v-if="!isMobile">Search</el-menu-item>
-        <el-menu-item index="/home" v-if="!isMobile">Home</el-menu-item>
-        <el-menu-item index="logout" v-if="!isMobile">Logout</el-menu-item>
+        <el-menu-item index="/search" v-if="!isMobile" class="item-menu"
+          >Search</el-menu-item
+        >
+        <el-menu-item index="/home" v-if="!isMobile" class="item-menu"
+          >Home</el-menu-item
+        >
+        <el-menu-item index="logout" v-if="!isMobile" class="item-menu"
+          >Logout</el-menu-item
+        >
         <el-sub-menu index="4" v-if="isMobile">
           <template #title>
             <el-icon :size="30" color="#409EFC" class="no-inherit">
@@ -85,8 +91,7 @@ const handleSelect = (index: string) => {
   justify-content: space-between;
   align-items: center;
   padding: 1rem;
-  background-color: #333;
-  color: #fff;
+  background: linear-gradient(90deg, #409efc 0%, #ec2f4b 100%);
 }
 
 .logo {
@@ -104,7 +109,14 @@ const handleSelect = (index: string) => {
 }
 
 .el-menu-demo {
-  background-color: #aaa3a3;
+  background: transparent;
   color: #fff;
+  font-size: 1.2rem;
+}
+
+.item-menu {
+  font-family: "Noto Sans SC", sans-serif;
+  color: #fff;
+  font-size: large;
 }
 </style>

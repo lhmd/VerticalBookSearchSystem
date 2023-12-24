@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { reactive, ref, onMounted, onBeforeUnmount } from "vue";
+import { reactive, ref } from "vue";
 import type { FormProps } from "element-plus";
 import { useRouter } from "vue-router";
 import axios from "axios";

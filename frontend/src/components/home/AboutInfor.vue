@@ -25,15 +25,9 @@
     </section>
     <section>
       <h2>Contact Us</h2>
-      <p>
-        Email: software@zju.edu.cn<br />
-      </p>
-      <p>
-        Phone: 123-456-7890<br />
-      </p>
-      <p>
-        Address: 浙江大学玉泉校区<br />
-      </p>
+      <p>Email: software@zju.edu.cn<br /></p>
+      <p>Phone: 123-456-7890<br /></p>
+      <p>Address: 浙江大学玉泉校区<br /></p>
     </section>
   </div>
 </template>
