@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -210,25 +211,28 @@ public class BookService {
     }
 
     public List<String> getBookCategories() throws IOException {
-        return getDistinctValues("category", "books");
+        List<String> categories = getDistinctValues("category", "books", 200);
+        return categories.stream().filter(i -> !(i.contains("|"))).collect(Collectors.toList());
     }
 
     public List<String> getBookPublishers() throws IOException {
-        return getDistinctValues("publisher", "books");
+        return getDistinctValues("publisher", "books", 100);
     }
 
     public List<String> getBookLanguages() throws IOException {
-        return getDistinctValues("bookLanguage", "books");
+        return getDistinctValues("bookLanguage", "books", 100);
     }
 
-    private List<String> getDistinctValues(String field, String index) throws IOException {
+    private List<String> getDistinctValues(String field, String index, int size) throws IOException {
         SearchResponse<ESBook> response = client.search(q -> q
                         .index(index)
                         .size(0)
                         .from(0)
                         .aggregations(field, a -> a
                                 .terms(t -> t
-                                        .field(field + ".keyword")))
+                                        .field(field + ".keyword")
+                                        .size(size)
+                                ))
 
                 , ESBook.class);
         StringTermsAggregate terms = response.aggregations().get(field).sterms();
@@ -248,7 +252,7 @@ public class BookService {
     }
 
     public void addBook(ESBook book) throws IOException {
-        System.out.println(book);
+//        System.out.println(book);
         IndexRequest<Object> indexRequest = new IndexRequest.Builder<>()
                 .index("books")
                 .id(book.getUuid())

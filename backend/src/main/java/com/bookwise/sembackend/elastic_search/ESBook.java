@@ -15,6 +15,7 @@ import java.util.concurrent.ThreadLocalRandom;
 public class ESBook {
     private String uuid;
     private String name;
+    private String author;
     private String category;
     private String publisher;
     private Integer pages;
@@ -98,7 +99,7 @@ public class ESBook {
         String randomImageUrl = generateRandomImageUrl();
         String randomSource = getRandomRealSource(); // Add this line to get a random real source
 
-        return new ESBook(randomUuid, randomName, randomCategory, randomPublisher,
+        return new ESBook(randomUuid, randomName, "", randomCategory, randomPublisher,
                 randomPages, randomPublishYear, randomBookLanguage, randomISBN, randomImageUrl, randomSource);
     }
 

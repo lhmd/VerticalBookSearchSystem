@@ -16,6 +16,7 @@ import java.sql.SQLException;
 public class GlobalExceptionHandler {
     private void log(Exception e) {
         log.error(e.getClass().getSimpleName() + ": " + e.getMessage());
+        e.printStackTrace();
     }
 
     @ExceptionHandler(SQLException.class)

@@ -31,10 +31,11 @@ public class SearchControllerTest {
     }
     @Test
     public void test() {
-        String content = readFile("JsonBookDownloader/proccessed_data.json");
+        String content = readFile("JsonBookDownloader/data.json");
         List<ESBook> books = JSONArray.parseArray(content, ESBook.class);
         System.out.println(books.size());
         assert !books.isEmpty();
+        System.out.println("Inserting " + books.size() + " books");
         for (ESBook b : books) {
             searchController.addBook(b);
         }
