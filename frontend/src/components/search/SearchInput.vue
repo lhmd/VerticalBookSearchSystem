@@ -273,7 +273,7 @@ function goToBook(name: string) {
 <template>
   <el-form :model="bookSearch" label-width="100px" class="sidebar">
     <el-form-item label="书籍类别：">
-      <el-checkbox
+      <!-- <el-checkbox
         v-model="checkAll"
         :indeterminate="isIndeterminate"
         @change="handleCheckAllChange"
@@ -286,7 +286,21 @@ function goToBook(name: string) {
         <el-checkbox v-for="item in category" :label="item" :key="item">{{
           item
         }}</el-checkbox>
-      </el-checkbox-group>
+      </el-checkbox-group> -->
+      <el-select
+        v-model="bookSearch.category"
+        multiple
+        collapse-tags
+        placeholder="请选择"
+      >
+        <el-option
+          v-for="item in category"
+          :key="item"
+          :label="item"
+          :value="item"
+        ></el-option>
+      </el-select>
+      
     </el-form-item>
     <el-form-item label="书籍名称：">
       <el-input v-model="bookSearch.name" style="width: 15vw"></el-input>

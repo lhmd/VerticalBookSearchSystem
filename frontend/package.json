@@ -16,6 +16,8 @@
     "axios": "^1.5.1",
     "echarts": "^5.4.3",
     "element-plus": "^2.4.1",
+    "koa": "^2.14.2",
+    "koa-static": "^5.0.0",
     "myx-slider-captcha": "^1.0.7",
     "pinia": "^2.1.7",
     "volar-service-vetur": "^0.0.14",
